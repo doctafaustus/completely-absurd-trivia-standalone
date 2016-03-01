@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<title>Completely Useless Trivia</title>
+	<link href='https://fonts.googleapis.com/css?family=Roboto:400,900,700' rel='stylesheet' type='text/css'>
+	<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300,600,700' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" type="text/css" href="normalize.css">
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<link rel="stylesheet" type="text/css" href="hover.css">
+	<link rel="stylesheet" type="text/css" href="jquery.mCustomScrollbar.min.css">
+	<style type="text/css">
+		.mCSB_dragger_bar{ width: 8px !important; background-color: #FD00AF !important; border-radius: 0 !important;}
+	</style>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<script src="typed.min.js"></script>
+	<script src="highcharts.js"></script>
+	<script src="jquery.mCustomScrollbar.concat.min.js"></script>
+</head>
+<body>
+	<div id="wrapper">
+		<div id="sidebar">
+
+			<h2 class="category-title">Leaders</h2>
+			<div id="prize-section">
+				<ul id="prize-board">
+					<li class="prize-category">
+						<div class="prize-panel">
+							<div class="prize-icon">
+								<img src="medal-icon.png">
+							</div>
+							<span class="prize-title">Most Points</span>
+						</div>
+						<div class="prize-leader" id="most-points-leader">
+							Devnik21
+						</div>
+					</li>
+					<li class="prize-category">
+						<div class="prize-panel">
+							<div class="prize-icon">
+								<img src="target-icon.png">
+							</div>
+							<span class="prize-title">Correct %</span>
+						</div>
+						<div class="prize-leader" id="correct-leader">
+							AceDauntless
+						</div>
+					</li>
+					<li class="prize-category">
+						<div class="prize-panel">
+							<div class="prize-icon">
+								<img src="flame-icon.png">
+							</div>
+							<span class="prize-title">Best Streak</span>
+						</div>
+						<div class="prize-leader" id="best-streak-leader">
+							Jeriquroqui1556
+						</div>
+					</li>
+					<li class="prize-category">
+						<div class="prize-panel">
+							<div class="prize-icon">
+								<img src="goat-icon.png" id="goat">
+							</div>
+							<span class="prize-title">Goat of the Game</span>
+						</div>
+						<div class="prize-leader" id="goat-leader">
+							Amy445
+						</div>
+					</li>
+				</ul>
+			</div>
+
+			<h2 class="category-title">Leaderboard</h2>
+			<div id="leaderboard">
+				<table id="leaderboard-list">
+					<tr>
+						<td class="leaderboard-rank">1.</td>
+						<td class="leaderboard-score">2000</td>
+						<td class="leaderboard-user">Devnik21</td>
+					</tr>
+					<tr>
+						<td class="leaderboard-rank">2.</td>
+						<td class="leaderboard-score">1900</td>
+						<td class="leaderboard-user">AceDauntless</td>
+					</tr>
+					<tr>
+						<td class="leaderboard-rank">3.</td>
+						<td class="leaderboard-score">1800</td>
+						<td class="leaderboard-user">Jeriquroqui1556</td>
+					</tr>
+					<tr>
+						<td class="leaderboard-rank">4.</td>
+						<td class="leaderboard-score">1700</td>
+						<td class="leaderboard-user">Amy445</td>
+					</tr>
+					<tr>
+						<td class="leaderboard-rank">5.</td>
+						<td class="leaderboard-score">1500</td>
+						<td class="leaderboard-user">JJfine</td>
+					</tr>
+					<tr>
+						<td class="leaderboard-rank">6.</td>
+						<td class="leaderboard-score">1500</td>
+						<td class="leaderboard-user">Stupidpeas</td>
+					</tr>
+					<tr>
+						<td class="leaderboard-rank">7.</td>
+						<td class="leaderboard-score">1100</td>
+						<td class="leaderboard-user">YoYomah233245</td>
+					</tr>
+					<tr>
+						<td class="leaderboard-rank">8.</td>
+						<td class="leaderboard-score">900</td>
+						<td class="leaderboard-user">AweraFF4</td>
+					</tr>
+					<tr>
+						<td class="leaderboard-rank">9.</td>
+						<td class="leaderboard-score">750</td>
+						<td class="leaderboard-user">ChillNation</td>
+					</tr>
+					<tr>
+						<td class="leaderboard-rank">10.</td>
+						<td class="leaderboard-score">600</td>
+						<td class="leaderboard-user">Idiocrazy</td>
+					</tr>
+				</table>
+			</div>
+
+			<h2 class="category-title">Categories</h2>
+			<div class="category-section">
+				<div class="category-icon">
+					<img src="pot-icon.png">
+				</div>
+				<a class="category" href="#">Hot Pot</a>
+				<ul class="category-list">
+					<li class="incorrect">100</li>
+					<li class="incorrect">200</li>
+					<li class="correct">300</li>
+					<li class="correct">400</li>
+					<li>500</li>
+				</ul>
+			</div>
+			<div class="category-section">
+				<div class="category-icon">
+					<img src="woman-icon.png">
+				</div>
+				<a class="category" href="#">Pics of Your Mom</a>
+				<ul class="category-list">
+					<li>100</li>
+					<li>200</li>
+					<li>300</li>
+					<li>400</li>
+					<li>500</li>
+				</ul>
+			</div>
+			<div class="category-section">
+				<div class="category-icon">
+					<img src="penguin-icon.png">
+				</div>
+				<a class="category" href="#">Memes</a>
+				<ul class="category-list">
+					<li>100</li>
+					<li>200</li>
+					<li>300</li>
+					<li>400</li>
+					<li>500</li>
+				</ul>
+			</div>
+			<div class="category-section">
+				<div class="category-icon">
+					<img src="fishhead-icon.png">
+				</div>
+				<a class="category" href="#">Disgusting Food</a>
+				<ul class="category-list">
+					<li>100</li>
+					<li>200</li>
+					<li>300</li>
+					<li>400</li>
+					<li>500</li>
+				</ul>
+			</div>
+
+		</div>
+		<div id="main">
+			<header>
+				<img src="logo.png" id="logo">
+				<h1 id="logo-text">Completely Useless Trivia</h1>
+				<div id="header-right">
+					<img id="avatar" src="avatar.jpg">
+					<span id="username">VeryNice251</span>
+				</div>
+			</header>
+			<div id="console">
+				<div class="question-container-desktop">
+					<div class="question">
+						What is the closest planet to the Sun?
+					</div>
+					<div class="progress-container">
+						<div class="outer-progress">
+							<div class="progress-bar" style="width: 100%; margin-left: 0px;">&nbsp;</div>
+						</div>
+					</div>
+				</div>
+				<iframe id="video" src="http://player.twitch.tv/?channel=clowd150" frameborder="0" scrolling="no" height="378" width="626"></iframe>
+				<div class="question-container-mobile">
+					<div class="question">
+						What is the closest planet to the Sun?
+					</div>
+					<div class="progress-container">
+						<div class="outer-progress">
+							<div class="progress-bar" style="width: 100%; margin-left: 0px;">&nbsp;</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="left-col">
+				<div class="answers">
+					<div id="answers-inner">
+						<div class="a-b">
+							<button class="answer hvr-hollow" id="A">Living in America</button>
+							<button class="answer hvr-hollow" id="B">Stevie Wonder</button>
+						</div>
+						<div class="c-d">
+							<button class="answer hvr-hollow" id="C">Lionel Richie</button>
+							<button class="answer hvr-hollow" id="D">James Browrafda asdf</button>
+						</div>
+					</div>
+				</div>
+				<div id="my-scores">
+					<div class="score-row-left">
+						<div class="score-large score-left">200</div>
+						<div class="score-small score-left">Score</div>
+					</div>
+					<div class="score-row-right">
+						<div class="score-large">2/25</div>
+						<div class="score-small">Rank</div>
+					</div>
+					<div class="score-row-left score-second-row">
+						<div class="score-large score-left">3</div>
+						<div class="score-small score-left">Highest Streak</div>
+					</div>
+					<div class="score-row-right score-second-row">
+						<div class="score-large">75%</div>
+						<div class="score-small">Accuracy</div>
+					</div>
+				</div>
+				<div id="chart1"></div>
+			</div>
+			<div id="right-col">
+				<div id="chart3-container">
+					<a id="show-chat" href="#">SHOW CHAT</a>
+					<div id="chart3"></div>
+				</div>
+				<div id="chat">
+					<ul id="chat-messages">
+						<li class="message-row">
+							<span class="chat-user">Elite Dude</span><span class="message">The*</span>
+						</li>
+						<li class="message-row">
+							<span class="chat-user">gilion games</span><span class="message"></span>
+						</li>
+						<li class="message-row">
+							<span class="chat-user">Darian Garcia</span><span class="message">(666)420-6969 is his number</span>
+						</li>
+						<li class="message-row">
+							<span class="chat-user">aj stone</span><span class="message">DAB</span>
+						</li>
+						<li class="message-row">
+							<span class="chat-user">Gold Playz</span><span class="message">Watch you lose lol</span>
+						</li>
+						<li class="message-row">
+							<span class="chat-user">DJ Unreal</span><span class="message">The culling</span>
+						</li>
+						<li class="message-row">
+							<span class="chat-user">Douglas Bodxy</span><span class="message">add me lil deenine132 on ps4</span>
+						</li>
+						<li class="message-row">
+							<span class="chat-user">Mr. K</span><span class="message">Behind you Noah</span>
+						</li>
+						<li class="message-row">
+							<img class="user-icon" src="avatars/aaron-perez.png"><span class="chat-user">Aaron Perez</span><span class="message">a rock and the poison</span>
+						</li>
+						<li class="message-row">
+							<img class="user-icon" src="avatars/B18aturbo.png"><span class="chat-user">B18aturbo</span><span class="message">DAB</span>
+						</li>
+						<li class="message-row">
+							<img class="user-icon" src="avatars/gavyn-wesner.png"><span class="chat-user">Gavyn Wesner</span><span class="message">how do you know</span>
+						</li>
+
+
+						<li class="message-row">
+							<img class="user-icon" src="avatars/gold-playz.png"><span class="chat-user">Gold Playz</span><span class="message">Watch you lose lol</span>
+						</li>
+						<li class="message-row">
+							<img class="user-icon" src="avatars/dj-unreal.png"><span class="chat-user">DJ Unreal</span><span class="message">The culling</span>
+						</li>
+						<li class="message-row">
+							<img class="user-icon" src="avatars/douglas-bodxy.png"><span class="chat-user">Douglas Bodxy</span><span class="message">add me lil deenine132 on ps4</span>
+						</li>
+						<li class="message-row">
+							<img class="user-icon" src="avatars/mr-k.png"><span class="chat-user">Mr. K</span><span class="message">Behind you Noah</span>
+						</li>
+						<li class="message-row">
+							<img class="user-icon" src="avatars/aaron-perez.png"><span class="chat-user">Aaron Perez</span><span class="message">a rock and the poison</span>
+						</li>
+						<li class="message-row">
+							<img class="user-icon" src="avatars/B18aturbo.png"><span class="chat-user">B18aturbo</span><span class="message">DAB</span>
+						</li>
+						<li class="message-row">
+							<img class="user-icon" src="avatars/gavyn-wesner.png"><span class="chat-user">Gavyn Wesner</span><span class="message">how do you know</span>
+						</li>
+					</ul>
+					<div id="chat-control">
+						<img class="user-icon" id="my-icon" src="avatar.jpg"><input type="text" id="message-input" placeholder="Say something...">
+					</div>
+					<div id="chat-bottom">
+						<a href="#" id="hide-chat">HIDE CHAT</a>
+					</div>
+				</div>
+
+				<div id="chart2">
+
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+		$(document).ready(function() {
+			// Category dropdown event handler
+			$(".category-section").click(function(e) {
+				e.preventDefault();
+				$(this).find(".category-list").slideToggle();
+			});
+
+			function coolType(string) {
+				$(".question").data('typed', null).typed({
+					strings: [string],
+					contentType: "text",
+					typeSpeed: -35,
+					showCursor: false
+				});	
+			}
+			coolType("What is the closest planet to the Sun?");
+
+			function formatAnswerHeight() {
+				$(".answer").attr('style', 'height: inherit');
+				var maxHeight = Math.max.apply(null, $(".answer").map(function() {return $(this).height();}).get());
+
+				var answers = $.map($(".answer"), function(val, i) {
+					if ($(val).height() !== maxHeight) {
+						return val;
+					}
+				});
+
+				$(".answer").attr('style', 'height: ' + (maxHeight + 20) + 'px;');
+
+				// for (var i = 0; i < answers.length; i++) {
+				// 	$(answers[i]).css("line-height", maxHeight + "px");
+				// }
+			}
+			formatAnswerHeight();
+
+
+			// $(".outer-progress").animate(
+			// 	{
+			// 		width: "0%"
+			// 	}, 
+			// 	{
+			// 		duration: 5000,
+			// 		specialEasing: {
+			// 			width: "linear"
+			// 		},
+			// 		complete: function() {
+			// 			console.log("Progress bar finished.");
+			// 		}
+			// 	}
+			// );
+
+
+			// Answer selection
+			$(document).on('click', '.answer', function(e) {
+				e.preventDefault();
+				$(this).addClass('selected');
+				$(".answer").prop("disabled", true);
+			});
+
+
+		    // Custom Scrollbar
+		    var scrollPosition = ""; // Keep track of scroll position
+		    $("#chat-messages").mCustomScrollbar({
+		    	theme: "dark",
+			    callbacks:{
+			        whileScrolling:function() {
+			        	scrollPosition = this.mcs.topPct;
+			        }
+			    }
+			});
+
+		    // Keep scrollbar at bottom
+		    setTimeout(function() { // FireFox needs a small delay
+				$("#chat-messages").mCustomScrollbar("scrollTo","bottom", {
+				    scrollInertia:300
+				});
+		    }, 500);
+
+
+
+			setTimeout(function() {
+				var message = '<li class="message-row"><img class="user-icon" src="avatars/new-wesner.png"><span class="chat-user">New Wesner</span><span class="message">This is a new messages, jsut so you know</span></li>';$("#mCSB_1_container").append(message);
+				if (scrollPosition > 90) { // If user has scrolled up then don't move the scrollbar for them
+					$("#chat-messages").mCustomScrollbar("scrollTo","bottom", {
+			    scrollInertia:300
+			});
+				}
+			}, 1500);
+			setTimeout(function() {
+				var message = '<li class="message-row"><img class="user-icon" src="avatars/new-wesner.png"><span class="chat-user">New Wesner</span><span class="message">This is a new messages, jsut so you know</span></li>';$("#mCSB_1_container").append(message);
+				if (scrollPosition > 90) {
+					$("#chat-messages").mCustomScrollbar("scrollTo","bottom", {
+					    scrollInertia:300
+					});
+				}
+			}, 4500);
+
+			// Charts
+		    $('#chart1').highcharts({
+		        chart: {
+		            type: 'column'
+		        },
+		        plotOptions: {
+		            column: {
+		                colorByPoint: true
+		            }
+		        },
+		        colors: [
+		            '#1797FF',
+		            '#1797FF',
+		            '#FD00AF',
+		           	'#1797FF',
+		            '#1797FF'
+		        ],
+		        credits: {
+		        	enabled: false
+		        },
+		        title: {
+		            text: 'What is the closest planet to the Sun?'
+		        },
+		        xAxis: {
+		            categories: [
+		                'Living in America',
+		                'Lionel Richie',
+		                'Stevie Wonder',
+		                'James Brown',
+		                "No answer"
+		            ]
+		        },
+		        yAxis: {
+		            title: {
+		                text: 'Question 1/20'
+		            }
+		        },
+		        series: [{
+		        	showInLegend: false,
+		            name: 'Jane',
+		            data: [1, 28, 4, 3, 1]
+		        }],
+		    });
+
+	        $('#chart2').highcharts({
+		        chart: {
+		            type: 'bar'
+		        },
+		        plotOptions: {
+		            column: {
+		                colorByPoint: true
+		            }
+		        },
+		        colors: [
+		            '#FD00AF',
+		            ],
+		        credits: {
+		        	enabled: false
+		        },
+		        title: {
+		            text: 'Player Scores'
+		        },
+		        xAxis: {
+		            categories: [
+		                '0 - 100',
+		                '101 - 200',
+		                '201 - 300',
+		                '301 - 400',
+		                "401 - 500"
+		            ]
+		        },
+		        yAxis: {
+		            title: {
+		                text: 'Players'
+		            }
+		        },
+		        series: [{
+		        	showInLegend: false,
+		            name: 'Players',
+		            data: [1, 8, 4, 3, 1]
+		        }],
+	        });
+
+		    $('#chart3').highcharts({
+		        credits: {
+		        		enabled: false
+		        },
+		        chart: {
+		            plotBackgroundColor: null,
+		            plotBorderWidth: null,
+		            plotShadow: false,
+		            type: 'pie'
+		        },
+		        colors: [
+		        	'#1797FF',
+		            '#FD00AF'
+		        ],
+		        title: {
+		            text: 'Accuracy'
+		        },
+		        tooltip: {
+		            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+		        },
+		        plotOptions: {
+		            pie: {
+		                dataLabels: {
+		                    enabled: true,
+		                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+		                    style: {
+		                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+		                    }
+		                }
+		            }
+		        },
+		        series: [{
+		            name: 'Questions',
+		            colorByPoint: true,
+		            data: [{
+		                name: 'Correct',
+		                y: 56
+		            }, {
+		                name: 'Incorrect',
+		                y: 24
+		            }]
+		        }]
+		    });
+
+
+	        // Hide chat - show piechart
+	        $("#hide-chat").click(function(e) {
+	        	e.preventDefault();
+	        	$("#chat").hide();
+	        	$("#chart3-container").show();
+	        });
+
+	        // Show chat - hide piechart
+	        $("#show-chat").click(function(e) {
+	        	e.preventDefault();
+	        	$("#chart3-container").hide();
+	        	$("#chat").show();
+	        });
+
+	        // Easter Eggs
+		    var audioElement = document.createElement('audio');
+		    audioElement.setAttribute('src', 'goat.mp3');
+		    
+		    $('#goat').click(function() {
+		        audioElement.play();
+		    });
+		    
+
+		});
+	</script>
+</body>
+</html>
