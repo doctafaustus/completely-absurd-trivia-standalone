@@ -12,10 +12,12 @@
 	<style type="text/css">
 		.mCSB_dragger_bar{ width: 8px !important; background-color: #FD00AF !important; border-radius: 0 !important;}
 	</style>
+	<script src="socket.io.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 	<script src="typed.min.js"></script>
 	<script src="highcharts.js"></script>
 	<script src="jquery.mCustomScrollbar.concat.min.js"></script>
+
 </head>
 <body>
 	<div id="wrapper">
@@ -202,7 +204,7 @@
 						</div>
 					</div>
 				</div>
-				<iframe id="video" src="http://player.twitch.tv/?channel=clowd150" frameborder="0" scrolling="no" height="378" width="626"></iframe>
+<!-- 				<iframe id="video" src="http://player.twitch.tv/?channel=clowd150" frameborder="0" scrolling="no" height="378" width="626"></iframe> -->
 				<div class="question-container-mobile">
 					<div class="question">
 						What is the closest planet to the Sun?
@@ -573,7 +575,11 @@
 		        audioElement.play();
 		    });
 		    
-
+			var socket = io('http://localhost:3000');
+			socket.on('initialize', function (data) {
+				console.log(data);
+				
+			});
 		});
 	</script>
 </body>
