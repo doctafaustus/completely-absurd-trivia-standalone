@@ -1,0 +1,42 @@
+{
+	"c1-q1": {
+		"q": "What is the closest planet to the Sun?",
+		"a": "Earth",
+		"b": "Mars",
+		"c": "Mercury",
+		"d": "Venus",
+		"answer": "c"
+	},
+	"c1-q2": {
+		"q": "Who invented the modern toilet?",
+		"a": "Sir John Harington",
+		"b": "Thomas Edison",
+		"c": "Emmett Lathrop Brown",
+		"d": "Sir Henry Cole",
+		"answer": "a"
+	},
+	"c1-q3": {
+		"q": "What kind of weapon is a falchion?",
+		"a": "Sword",
+		"b": "Axe",
+		"c": "Bow",
+		"d": "Gun",
+		"answer": "a"
+	},
+	"c1-q4": {
+		"q": "Who was not a member of the Jackson 5?",
+		"a": "Tito Jackson",
+		"b": "Jermaine Jackson",
+		"c": "Marlon Jackson",
+		"d": "Gary Jackson",
+		"answer": "d"
+	},
+	"c1-q5": {
+		"q": "The kneecap is also known as what?",
+		"a": "Tibia",
+		"b": "Patella",
+		"c": "Spehnoid",
+		"d": "Clavicle",
+		"answer": "a"
+	},
+}

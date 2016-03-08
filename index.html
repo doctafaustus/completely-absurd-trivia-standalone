@@ -21,6 +21,21 @@
 </head>
 <body>
 	<div id="wrapper">
+		<div id="admin-bar">
+			<h1>Admin</h1>
+			<ul id="control-panel">
+				<li><button id="get-ranks">Get Ranks</button>
+			</ul>
+			<h2>Questions</h2>
+			<ul class="question-panel">
+				<li class="question-category">Hot Pot</li>
+				<li><button id="c1-q1" class="question-trigger">100</button></li>
+				<li><button id="c1-q2" class="question-trigger">200</button></li>
+				<li><button id="c1-q3" class="question-trigger">300</button></li>
+				<li><button id="c1-q4" class="question-trigger">400</button></li>
+				<li><button id="c1-q5" class="question-trigger">500</button></li>
+			</ul>
+		</div>
 		<div id="sidebar">
 
 			<h2 class="category-title">Leaders</h2>
@@ -34,7 +49,7 @@
 							<span class="prize-title">Most Points</span>
 						</div>
 						<div class="prize-leader" id="most-points-leader">
-							Devnik21
+<!-- 							Devnik21 -->
 						</div>
 					</li>
 					<li class="prize-category">
@@ -45,7 +60,7 @@
 							<span class="prize-title">Correct %</span>
 						</div>
 						<div class="prize-leader" id="correct-leader">
-							AceDauntless
+<!-- 							AceDauntless -->
 						</div>
 					</li>
 					<li class="prize-category">
@@ -56,7 +71,7 @@
 							<span class="prize-title">Best Streak</span>
 						</div>
 						<div class="prize-leader" id="best-streak-leader">
-							Jeriquroqui1556
+<!-- 							Jeriquroqui1556 -->
 						</div>
 					</li>
 					<li class="prize-category">
@@ -67,7 +82,7 @@
 							<span class="prize-title">Goat of the Game</span>
 						</div>
 						<div class="prize-leader" id="goat-leader">
-							Amy445
+<!-- 							Amy445 -->
 						</div>
 					</li>
 				</ul>
@@ -75,7 +90,7 @@
 
 			<h2 class="category-title">Leaderboard</h2>
 			<div id="leaderboard">
-				<table id="leaderboard-list">
+<!-- 				<table id="leaderboard-list">
 					<tr>
 						<td class="leaderboard-rank">1.</td>
 						<td class="leaderboard-score">2000</td>
@@ -126,7 +141,7 @@
 						<td class="leaderboard-score">600</td>
 						<td class="leaderboard-user">Idiocrazy</td>
 					</tr>
-				</table>
+				</table> -->
 			</div>
 
 			<h2 class="category-title">Categories</h2>
@@ -575,11 +590,56 @@
 		        audioElement.play();
 		    });
 		    
+		    // Intialize Socket.io
 			var socket = io('http://localhost:3000');
+			// Initialize
 			socket.on('initialize', function (data) {
 				console.log(data);
-				
 			});
+
+			// Get ranks
+			$("#get-ranks").click(function() {
+				socket.emit('getRanks');
+			});
+			socket.on('playersRanked', function (data) {
+				/* LEADERS */
+				// Most Points
+				// $("#most-points-leader").slideUp(function() {
+				// 	$(this).html(data.playerData.highestScoreData.highestScorePlayer + " (" + data.playerData.highestScoreData.highestScoreNumber + ")").slideDown();
+				// });
+				// // Correct %
+				// $("#correct-leader").slideUp(function() {
+				// 	$(this).html(data.playerData.highestAccuracyData.highestAccuracyPlayer + " (" + data.playerData.highestAccuracyData.highestAccuracyNumber + "%)").slideDown();
+				// });
+				// // Best Streak
+				// $("#best-streak-leader").slideUp(function() {
+				// 	$(this).html(data.playerData.highestStreakData.highestStreakPlayer + " (" + data.playerData.highestStreakData.highestStreakNumber + ")").slideDown();
+				// });
+				// // Goat of the Game
+				// $("#goat-leader").slideUp(function() {
+				// 	$(this).html(data.playerData.goat).slideDown();
+				// });
+
+				// Most Points
+				$("#most-points-leader").hide().html(data.playerData.highestScoreData.highestScorePlayer + " (" + data.playerData.highestScoreData.highestScoreNumber + ")").fadeIn(1000);
+				// Correct %
+				$("#correct-leader").hide().html(data.playerData.highestAccuracyData.highestAccuracyPlayer + " (" + data.playerData.highestAccuracyData.highestAccuracyNumber + "%)").fadeIn(1000);
+				// Best Streak
+				$("#best-streak-leader").hide().html(data.playerData.highestStreakData.highestStreakPlayer + " (" + data.playerData.highestStreakData.highestStreakNumber + ")").fadeIn(1000);
+				// Goat of the Game
+				$("#goat-leader").hide().html(data.playerData.goat).fadeIn(1000);
+
+
+				// Populate leaderboard
+				$("#leaderboard").hide().html(data.playerData.leaderboard).fadeIn(1000);
+			});
+
+			// Question control panel
+			$(".question-trigger").click(function() {
+				var id = $(this).attr('id');
+				console.log(id);
+			});
+
 		});
 	</script>
 </body>

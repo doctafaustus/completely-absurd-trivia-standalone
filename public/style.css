@@ -12,6 +12,24 @@ h1, h2, h3, h4, h5 ,h6 {
 	overflow: auto;
 	background-color: white;
 }
+#admin-bar {
+	float: left;
+	width: 200px;
+}
+#admin-bar {
+	text-align: center;
+}
+#admin-bar h1 {
+	margin-top: 18px;
+}
+#control-panel, .question-panel {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+.question-panel button {
+	margin-bottom: 10px;
+}
 #sidebar {
 	cursor: default;
 	width: 219px;
@@ -400,7 +418,7 @@ button:disabled, button:disabled:hover {
 
 
 
-@media (max-width: 1617px) {
+/*@media (max-width: 1617px) {
 	#console {
 		height: inherit;
 	}
@@ -453,4 +471,4 @@ button:disabled, button:disabled:hover {
 	#header-right {
 		display: none;
 	}
-}
+}*/
