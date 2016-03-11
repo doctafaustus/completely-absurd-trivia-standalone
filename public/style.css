@@ -213,6 +213,7 @@ h1, h2, h3, h4, h5 ,h6 {
 	border-right: solid 2px black;
 }
 #answers-inner {
+	width: 754px;
 	display: table-cell;
     vertical-align: middle;
 }

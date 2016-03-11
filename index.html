@@ -220,7 +220,8 @@
 					</div>
 				</div>
 <!-- 				<iframe id="video" src="http://player.twitch.tv/?channel=clowd150" frameborder="0" scrolling="no" height="378" width="626"></iframe> -->
-				<div class="question-container-mobile">
+					<!-- NOTE: enabling a second mobile container will cause animate and typed to run callbacks twice since there are two classes for progress-container and question! -->
+<!-- 				<div class="question-container-mobile">
 					<div class="question">
 						What is the closest planet to the Sun?
 					</div>
@@ -229,7 +230,7 @@
 							<div class="progress-bar" style="width: 100%; margin-left: 0px;">&nbsp;</div>
 						</div>
 					</div>
-				</div>
+				</div> -->
 			</div>
 			<div id="left-col">
 				<div class="answers">
@@ -355,10 +356,14 @@
 					strings: [string],
 					contentType: "text",
 					typeSpeed: -35,
-					showCursor: false
+					showCursor: false,
+					callback: function() {
+						console.log('test');
+						timerBar();
+					}
 				});	
 			}
-			coolType("What is the closest planet to the Sun?");
+			//coolType("What is the closest planet to the Sun?");
 
 			function formatAnswerHeight() {
 				$(".answer").attr('style', 'height: inherit');
@@ -379,20 +384,22 @@
 			formatAnswerHeight();
 
 
-			// $(".outer-progress").animate(
-			// 	{
-			// 		width: "0%"
-			// 	}, 
-			// 	{
-			// 		duration: 5000,
-			// 		specialEasing: {
-			// 			width: "linear"
-			// 		},
-			// 		complete: function() {
-			// 			console.log("Progress bar finished.");
-			// 		}
-			// 	}
-			// );
+			function timerBar() {
+				$(".outer-progress").animate(
+					{
+						width: "0%"
+					}, 
+					{
+						duration: 5000,
+						specialEasing: {
+							width: "linear"
+						},
+						complete: function() {
+							console.log("Progress bar finished.");
+						}
+					}
+				);
+			}
 
 
 			// Answer selection
@@ -636,9 +643,21 @@
 
 			// Question control panel
 			$(".question-trigger").click(function() {
-				var id = $(this).attr('id');
-				console.log(id);
+				var questionID = $(this).attr('id');
+				socket.emit('questionTriggered', questionID);
 			});
+			socket.on('questionPresented', function (questionData) {
+				// Show question with answers
+				coolType(questionData.question.q);
+				$("#A").text(questionData.question.a);
+				$("#B").text(questionData.question.b);
+				$("#C").text(questionData.question.c);
+				$("#D").text(questionData.question.d);
+
+				// Reset button styles
+				$(".answer").prop("disabled", false).removeClass("selected");
+			});
+
 
 		});
 	</script>

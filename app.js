@@ -9,7 +9,7 @@ var request = require("request");
 app.use(express.static(__dirname + '/public'));
 var questionData;
 request({
-    	url: "https://raw.githubusercontent.com/doctafaustus/Completely-Useless-Trivia/master/questions.json",
+    	url: "https://cdn.rawgit.com/doctafaustus/Completely-Useless-Trivia/master/questions.json",
     	json: true
 	}, function (error, response, body) {
 	    if (!error && response.statusCode === 200) {
@@ -27,6 +27,7 @@ app.get('/', function(req, res) {
 http.listen(3000, function() {
 	console.log("App listening on port 3000");
 });
+
 
 // SOCKET.IO
 var clients = {};
@@ -123,16 +124,8 @@ io.on('connection', function (socket) {
 		var goat = sortedClients[Math.floor(Math.random() * sortedClients.length)];
 		playerData.goat = goat.name;
 
-
-
-
-
-
 		return playerData;
 	}
-
-
-
 
 
 	socket.emit('initialize', { clients:  clients, questionData: questionData});
@@ -147,6 +140,10 @@ io.on('connection', function (socket) {
 
 	console.log("CLIENTS: " + Object.keys(clients).length);
 	console.log(clients);
+
+	socket.on('questionTriggered', function(questionID) {
+		io.emit('questionPresented', {question: questionData[questionID]});
+	});
 
 });
 
