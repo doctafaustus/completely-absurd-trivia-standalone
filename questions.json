@@ -1,5 +1,6 @@
 {
 	"c1-q1": {
+		"type": "text",
 		"q": "What is the closest planet to the Sun?",
 		"a": "Earth",
 		"b": "Mars",
@@ -8,6 +9,7 @@
 		"answer": "c"
 	},
 	"c1-q2": {
+		"type": "text",
 		"q": "Who invented the modern toilet?",
 		"a": "Sir John Harington",
 		"b": "Thomas Edison",
@@ -16,6 +18,7 @@
 		"answer": "a"
 	},
 	"c1-q3": {
+		"type": "text",
 		"q": "What kind of weapon is a falchion?",
 		"a": "Sword",
 		"b": "Axe",
@@ -24,6 +27,7 @@
 		"answer": "a"
 	},
 	"c1-q4": {
+		"type": "text",
 		"q": "Who was not a member of the Jackson 5?",
 		"a": "Tito Jackson",
 		"b": "Jermaine Jackson",
@@ -32,11 +36,62 @@
 		"answer": "d"
 	},
 	"c1-q5": {
+		"type": "text",
 		"q": "The kneecap is also known as what?",
 		"a": "Tibia",
 		"b": "Patella",
 		"c": "Spehnoid",
 		"d": "Clavicle",
 		"answer": "a"
+	},
+	"c2-q1": {
+		"type": "image",
+		"href": "https://s-media-cache-ak0.pinimg.com/736x/81/dc/b6/81dcb6789afe578ead79ebe627db7b2e.jpg",
+		"q": "Whose Mom is this?",
+		"a": "Mariska Hargitay",
+		"b": "Pamela Anderson",
+		"c": "Gisele Bundchen",
+		"d": "Kate Upton",
+		"answer": "a"
+	},
+	"c2-q2": {
+		"type": "image",
+		"href": "http://images.totalbeauty.com/content/photos/Marge_Simpson-420x280.jpg",
+		"q": "What is this mother's maiden name?",
+		"a": "Anderson",
+		"b": "Simpson",
+		"c": "Bouvier",
+		"d": "Flanders",
+		"answer": "c"
+	},
+	"c2-q3": {
+		"type": "image",
+		"href": "http://9126-presscdn-0-46.pagely.netdna-cdn.com/wp-content/uploads/2013/08/Mother-Teresa-and-the-Express-Novena.jpg",
+		"q": "How do you spell this mother's name?",
+		"a": "Mother Teresa",
+		"b": "Madre Taresa",
+		"c": "Mother Theresa",
+		"d": "Mother Terese",
+		"answer": "a"
+	},
+	"c2-q4": {
+		"type": "image",
+		"href": "http://cdn-ugc.cafemom.com/gen/constrain/500/500/80/2014/05/27/14/20/fs/pomlpp7vtw1k4qq.jpg",
+		"q": "How many children does this mother have?",
+		"a": "16",
+		"b": "19",
+		"c": "21",
+		"d": "23",
+		"answer": "b"
+	},
+	"c2-q4": {
+		"type": "image",
+		"href": "http://media.zenfs.com/en/blogs/omg-tv/1386004883_sharon-osbourne-lg.jpg",
+		"q": "Who is not a child of this mother?",
+		"a": "Aimee",
+		"b": "Daniel",
+		"c": "Jack",
+		"d": "Kelly",
+		"answer": "b"
 	}
 }

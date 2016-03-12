@@ -35,7 +35,14 @@
 				<li><button id="c1-q4" class="question-trigger">400</button></li>
 				<li><button id="c1-q5" class="question-trigger">500</button></li>
 			</ul>
-		</div>
+			<ul class="question-panel">
+				<li class="question-category">Pics of Your Mom</li>
+				<li><button id="c2-q1" class="question-trigger">100</button></li>
+				<li><button id="c2-q2" class="question-trigger">200</button></li>
+				<li><button id="c2-q3" class="question-trigger">300</button></li>
+				<li><button id="c2-q4" class="question-trigger">400</button></li>
+				<li><button id="c2-q5" class="question-trigger">500</button></li>
+			</ul>		</div>
 		<div id="sidebar">
 
 			<h2 class="category-title">Leaders</h2>
@@ -247,19 +254,19 @@
 				</div>
 				<div id="my-scores">
 					<div class="score-row-left">
-						<div class="score-large score-left">200</div>
+						<div id="my-score" class="score-large score-left">0</div>
 						<div class="score-small score-left">Score</div>
 					</div>
 					<div class="score-row-right">
-						<div class="score-large">2/25</div>
+						<div id="my-rank" class="score-large">0</div>
 						<div class="score-small">Rank</div>
 					</div>
 					<div class="score-row-left score-second-row">
-						<div class="score-large score-left">3</div>
-						<div class="score-small score-left">Highest Streak</div>
+						<div id="my-streak" class="score-large score-left">0</div>
+						<div class="score-small score-left">Streak</div>
 					</div>
 					<div class="score-row-right score-second-row">
-						<div class="score-large">75%</div>
+						<div id="my-accuracy" class="score-large">100%</div>
 						<div class="score-small">Accuracy</div>
 					</div>
 				</div>
@@ -639,6 +646,18 @@
 
 				// Populate leaderboard
 				$("#leaderboard").hide().html(data.playerData.leaderboard).fadeIn(1000);
+
+				// Get individual scores
+				socket.emit('getIndividualScores');
+			});
+
+			// Show individual scores
+			socket.on("showIndividualScores", function(individualData) {
+				console.log(individualData);
+				$("#my-score").text(individualData.score);
+				$("#my-rank").text(individualData.rank + "/" + individualData.totalPlayers);
+				$("#my-streak").text(individualData.streak);
+				$("#my-accuracy").text(individualData.accuracy + "%");
 			});
 
 			// Question control panel
@@ -656,6 +675,12 @@
 
 				// Reset button styles
 				$(".answer").prop("disabled", false).removeClass("selected");
+			});
+
+			// Answer question
+			$(".answer").click(function() {
+				var submittedAnswer = $(this).attr("id").toLowerCase();
+				socket.emit("answerGuessed", submittedAnswer);
 			});
 
 

@@ -13,10 +13,12 @@ request({
     	json: true
 	}, function (error, response, body) {
 	    if (!error && response.statusCode === 200) {
-	        console.log(body) // Print the json response
+	        // console.log(body) // Print the json response
 	        questionData = body;
 	    }
 })
+var currentQuestion;
+var questionsAsked = 0;
 
 // ROUTES
 app.get('/', function(req, res) {
@@ -42,6 +44,9 @@ io.on('connection', function (socket) {
 	clients[socket.id]["score"] = 0;
 	clients[socket.id]["streak"] = 0;
 	clients[socket.id]["accuracy"] = 100;
+	clients[socket.id]["questionsAnswered"] = 0;
+	clients[socket.id]["questionsCorrect"] = 0;
+	//clients[socket.id]["rank"] = 0;
 
 	// Rank players
 	function rankPlayers() {
@@ -130,20 +135,53 @@ io.on('connection', function (socket) {
 
 	socket.emit('initialize', { clients:  clients, questionData: questionData});
 
+	console.log("CLIENTS: " + Object.keys(clients).length);
+	//console.log(clients);
 
+	// Manual get ranks
     socket.on('getRanks', function(socket) {
     	console.log("Getting ranks...");
-
 		var playerData = rankPlayers();
 		io.emit('playersRanked', {playerData: playerData});
 	});
 
-	console.log("CLIENTS: " + Object.keys(clients).length);
-	console.log(clients);
+	// Get individual scores
+	socket.on('getIndividualScores', function() {
+		var individualData = {
+			score: clients[socket.id]["score"],
+			streak: clients[socket.id]["streak"],
+			accuracy: clients[socket.id]["accuracy"],
+			rank: clients[socket.id]["rank"],
+			totalPlayers: Object.keys(clients).length
+		};
 
-	socket.on('questionTriggered', function(questionID) {
-		io.emit('questionPresented', {question: questionData[questionID]});
+		socket.emit('showIndividualScores', individualData);
 	});
+
+	// Trigger question
+	socket.on('questionTriggered', function(questionID) {
+		console.log("Question triggered...");
+		io.emit('questionPresented', {question: questionData[questionID]});
+		currentQuestion = questionData[questionID];
+		questionsAsked += 1;
+	});
+
+	// Answer question
+	socket.on('answerGuessed', function(submittedAnswer) {
+		clients[socket.id]["questionsAnswered"] += 1;
+		if (submittedAnswer === currentQuestion.answer) {
+			console.log("Correct!");
+			clients[socket.id]["questionsCorrect"] += 1;
+			clients[socket.id]["score"] += 100;
+			clients[socket.id]["streak"] += 1;
+		} else {
+			console.log("Incorrect");
+			clients[socket.id]["streak"] = 0;
+		}
+		clients[socket.id]["accuracy"] = (clients[socket.id]["questionsCorrect"] / clients[socket.id]["questionsAnswered"] * 100).toFixed(0);
+		console.log("Acccuracy " + clients[socket.id]["accuracy"]);
+	});
+
 
 });
 
