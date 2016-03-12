@@ -9,7 +9,7 @@ var request = require("request");
 app.use(express.static(__dirname + '/public'));
 var questionData;
 request({
-    	url: "https://cdn.rawgit.com/doctafaustus/Completely-Useless-Trivia/master/questions.json",
+    	url: "https://raw.githubusercontent.com/doctafaustus/Completely-Useless-Trivia/master/questions.json",
     	json: true
 	}, function (error, response, body) {
 	    if (!error && response.statusCode === 200) {
