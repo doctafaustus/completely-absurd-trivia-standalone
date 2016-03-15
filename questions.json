@@ -138,5 +138,55 @@
 		"c": "Candy corn",
 		"d": "Gummy bears",
 		"answer": "c"
+	},
+	"c4-q1": {
+		"type": "image",
+		"href": "http://i.imgur.com/wehfw2z.jpg",
+		"q": "Who is this?",
+		"a": "Scumbag Sean",
+		"b": "Sleazeball Shawn",
+		"c": "Scumbag Steve",
+		"d": "Scuzzbag Sam",
+		"answer": "c"
+	},
+	"c4-q2": {
+		"type": "image",
+		"href": "http://i.imgur.com/GImGEX2.jpg",
+		"q": "What is the name of this frog?",
+		"a": "Pepe",
+		"b": "Pete",
+		"c": "Phil",
+		"d": "Paul",
+		"answer": "a"
+	},
+	"c4-q3": {
+		"type": "image",
+		"href": "http://i.imgur.com/kfqobKR.jpg",
+		"q": "What is this meme typically associated with?",
+		"a": "Creepiness",
+		"b": "Social Awkwardness",
+		"c": "Good luck",
+		"d": "Bad luck",
+		"answer": "d"
+	},
+	"c4-q4": {
+		"type": "image",
+		"href": "http://i.imgur.com/SxHeYlt.jpg",
+		"q": "What is this meme commonly known as?",
+		"a": "Overly Attached Girlfriend",
+		"b": "Creepy Girlfriend",
+		"c": "Stalker Girlfriend",
+		"d": "Crazy Girlfriend",
+		"answer": "a"
+	},
+	"c4-q5": {
+		"type": "image",
+		"href": "http://i.imgur.com/tuu5sxb.jpg",
+		"q": "What is the name of this dog?",
+		"a": "Dingo",
+		"b": "Doge",
+		"c": "Taco",
+		"d": "Shiba",
+		"answer": "b"
 	}
 }
