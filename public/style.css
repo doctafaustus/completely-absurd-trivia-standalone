@@ -184,6 +184,9 @@ h1, h2, h3, h4, h5 ,h6 {
 .question-container-mobile {
 	display: none;
 }
+.question-image-container {
+	text-align: center;
+}
 .question {
 	font-weight: 600;
 	color: white;
@@ -194,6 +197,11 @@ h1, h2, h3, h4, h5 ,h6 {
 	text-shadow: 2px 2px #717171;
 	padding: 0 89px;
 	text-align: left;
+}
+.question.with-picture {
+	transform: initial;
+	top: initial;
+	margin-top: 20px;
 }
 #video {
     float: right;

@@ -51,6 +51,14 @@
 				<li><button id="c3-q4" class="question-trigger">400</button></li>
 				<li><button id="c3-q5" class="question-trigger">500</button></li>
 			</ul>
+			<ul class="question-panel">
+				<li class="question-category">Memes</li>
+				<li><button id="c4-q1" class="question-trigger">100</button></li>
+				<li><button id="c4-q2" class="question-trigger">200</button></li>
+				<li><button id="c4-q3" class="question-trigger">300</button></li>
+				<li><button id="c4-q4" class="question-trigger">400</button></li>
+				<li><button id="c4-q5" class="question-trigger">500</button></li>
+			</ul>
 		</div>
 		<div id="sidebar">
 
@@ -226,6 +234,9 @@
 			</header>
 			<div id="console">
 				<div class="question-container-desktop">
+					<div class="question-image-container">
+						<img id="question-image" src="http://i.imgur.com/gfElT1J.png">
+					</div>
 					<div class="question">
 						What is the closest planet to the Sun?
 					</div>
@@ -406,11 +417,12 @@
 						width: "0%"
 					}, 
 					{
-						duration: 5000,
+						duration: 8000,
 						specialEasing: {
 							width: "linear"
 						},
 						complete: function() {
+							$(".answer").prop("disabled", true);
 							console.log("Progress bar finished.");
 						}
 					}
@@ -681,6 +693,17 @@
 				$("#B").text(questionData.question.b);
 				$("#C").text(questionData.question.c);
 				$("#D").text(questionData.question.d);
+				formatAnswerHeight();
+
+				// Show picture if the question is an image type otherwise show 1x1 transparent pixel placeholder
+				if (questionData.question.type === "image") {
+					console.log(questionData.question.href);
+					$("#question-image").attr("src", questionData.question.href);
+					$(".question").addClass("with-picture");
+				} else {
+					$("#question-image").attr("src", "http://i.imgur.com/gfElT1J.png");
+					$(".question").removeClass("with-picture");
+				}
 
 				// Reset button styles
 				$(".answer").prop("disabled", false).removeClass("selected");
@@ -693,6 +716,14 @@
 			});
 
 
+
+
+
+
+			// Admin stuff
+			if ($("#admin-bar").is(":visible")) {
+				$("#wrapper").attr("style", "max-width: 1800px;");
+			}
 		});
 	</script>
 </body>

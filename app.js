@@ -161,7 +161,7 @@ io.on('connection', function (socket) {
 	// Trigger question
 	socket.on('questionTriggered', function(questionID) {
 		console.log("Question triggered...");
-		io.emit('questionPresented', {question: questionData[questionID]});
+		io.emit('questionPresented', {question: questionData[questionID] });
 		currentQuestion = questionData[questionID];
 		questionsAsked += 1;
 	});
