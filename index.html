@@ -17,6 +17,7 @@
 	<script src="typed.min.js"></script>
 	<script src="highcharts.js"></script>
 	<script src="jquery.mCustomScrollbar.concat.min.js"></script>
+	<script src="jquery.transit.min.js"></script>
 
 </head>
 <body>
@@ -175,11 +176,11 @@
 				</div>
 				<a class="category" href="#">Hot Pot</a>
 				<ul class="category-list">
-					<li class="incorrect">100</li>
-					<li class="incorrect">200</li>
-					<li class="correct">300</li>
-					<li class="correct">400</li>
-					<li>500</li>
+					<li class="c1-q1">100</li>
+					<li class="c1-q2">200</li>
+					<li class="c1-q3">300</li>
+					<li class="c1-q4">400</li>
+					<li class="c1-q5">500</li>
 				</ul>
 			</div>
 			<div class="category-section">
@@ -188,11 +189,11 @@
 				</div>
 				<a class="category" href="#">Pics of Your Mom</a>
 				<ul class="category-list">
-					<li>100</li>
-					<li>200</li>
-					<li>300</li>
-					<li>400</li>
-					<li>500</li>
+					<li class="c2-q1">100</li>
+					<li class="c2-q2">200</li>
+					<li class="c2-q3">300</li>
+					<li class="c2-q4">400</li>
+					<li class="c2-q5">500</li>
 				</ul>
 			</div>
 			<div class="category-section">
@@ -201,11 +202,11 @@
 				</div>
 				<a class="category" href="#">Disgusting Food</a>
 				<ul class="category-list">
-					<li>100</li>
-					<li>200</li>
-					<li>300</li>
-					<li>400</li>
-					<li>500</li>
+					<li class="c3-q1">100</li>
+					<li class="c3-q2">200</li>
+					<li class="c3-q3">300</li>
+					<li class="c3-q4">400</li>
+					<li class="c3-q5">500</li>
 				</ul>
 			</div>
 			<div class="category-section">
@@ -214,11 +215,11 @@
 				</div>
 				<a class="category" href="#">Memes</a>
 				<ul class="category-list">
-					<li>100</li>
-					<li>200</li>
-					<li>300</li>
-					<li>400</li>
-					<li>500</li>
+					<li class="c4-q1">100</li>
+					<li class="c4-q2">200</li>
+					<li class="c4-q3">300</li>
+					<li class="c4-q4">400</li>
+					<li class="c4-q5">500</li>
 				</ul>
 			</div>
 
@@ -376,6 +377,7 @@
 	</div>
 	<script>
 		$(document).ready(function() {
+
 			var submittedAnswer = null;
 			$(".answer").click(function() {
 				submittedAnswer = $(this).attr("id").toLowerCase();
@@ -390,17 +392,74 @@
 				$(this).find(".category-list").slideToggle();
 			});
 
+
 			function coolType(string) {
+				timerBar();
 				$(".question").data('typed', null).typed({
 					strings: [string],
 					contentType: "text",
 					typeSpeed: -35,
 					showCursor: false,
 					callback: function() {
-						console.log('test');
-						timerBar();
+						// IMPORTANT - don't run the timer in the callback function (if the window is inactive there will be a delay before it is run)
+						console.log('coolType finished');
 					}
 				});	
+			}
+
+			function timerBar() {
+				$(".progress-bar").transition({ width: 0 }, 5000, 'linear', function() {
+					$(".answer").prop("disabled", true);
+					socket.emit("answerGuessed", submittedAnswer);
+					$("#generating").fadeIn();
+					console.log("done!");
+				});
+
+				//$(".outer-progress").attr('style', 'height: 5px;');
+
+				// $(".outer-progress").animate(
+				// 	{
+				// 		width: "0%"
+				// 	}, 
+				// 	{
+				// 		duration: 3000,
+				// 		specialEasing: {
+				// 			width: "linear"
+				// 		},
+				// 		complete: function() {
+				// 			$(".answer").prop("disabled", true);
+
+				// 			socket.emit("answerGuessed", submittedAnswer);
+
+				// 			$("#generating").fadeIn();
+				// 		}
+				// 	}
+				// );
+
+				// Work in progress...
+				// var div = $(".outer-progress");
+				// var a = 100;
+				// var delay = (2000 / 30);
+				// var now, before = new Date();
+
+				// console.time("start");
+				// var interval = setInterval(function() {
+				//     now = new Date();
+				//     var elapsedTime = (now.getTime() - before.getTime());
+				//     if(elapsedTime > delay)
+				//         //Recover the motion lost while inactive.
+				//         a -= Math.floor(elapsedTime/delay);
+				//     else
+				//         a--;
+				//     div.css("width", a + "%");
+				//     before = new Date();
+				//     if (a <= 0) {
+				//     	console.timeEnd("start");
+				//     	console.log("tests");
+				//     	clearInterval(interval);
+				//     }
+				// }, delay);
+
 			}
 
 			function formatAnswerHeight() {
@@ -418,26 +477,7 @@
 			formatAnswerHeight();
 
 
-			function timerBar() {
-				$(".outer-progress").animate(
-					{
-						width: "0%"
-					}, 
-					{
-						duration: 3000,
-						specialEasing: {
-							width: "linear"
-						},
-						complete: function() {
-							$(".answer").prop("disabled", true);
 
-							socket.emit("answerGuessed", submittedAnswer);
-
-							$("#generating").fadeIn();
-						}
-					}
-				);
-			}
 
 			// Answer selection
 			$(document).on('click', '.answer', function(e) {
@@ -523,7 +563,7 @@
 		        },
 		        series: [{
 		        	showInLegend: false,
-		            name: 'Jane',
+		            name: 'Players',
 		            data: [1, 28, 4, 3, 1]
 		        }],
 		    });
@@ -681,24 +721,6 @@
 				socket.emit('getRanks');
 			});
 			socket.on('playersRanked', function (data) {
-				/* LEADERS */
-				// Most Points
-				// $("#most-points-leader").slideUp(function() {
-				// 	$(this).html(data.playerData.highestScoreData.highestScorePlayer + " (" + data.playerData.highestScoreData.highestScoreNumber + ")").slideDown();
-				// });
-				// // Correct %
-				// $("#correct-leader").slideUp(function() {
-				// 	$(this).html(data.playerData.highestAccuracyData.highestAccuracyPlayer + " (" + data.playerData.highestAccuracyData.highestAccuracyNumber + "%)").slideDown();
-				// });
-				// // Best Streak
-				// $("#best-streak-leader").slideUp(function() {
-				// 	$(this).html(data.playerData.highestStreakData.highestStreakPlayer + " (" + data.playerData.highestStreakData.highestStreakNumber + ")").slideDown();
-				// });
-				// // Goat of the Game
-				// $("#goat-leader").slideUp(function() {
-				// 	$(this).html(data.playerData.goat).slideDown();
-				// });
-
 				// Most Points
 				$("#most-points-leader").hide().html(data.playerData.highestScoreData.highestScorePlayer + " (" + data.playerData.highestScoreData.highestScoreNumber + ")").fadeIn(1000);
 				// Correct %
@@ -718,7 +740,7 @@
 				// Basically this checks to see if the playersRank event was triggered manually or automatically (automatic triggers should should specific data)
 				if (data.extraData) { 
 					// Reset timer bar
-					$(".outer-progress").attr("style", "width: 100%;");
+					$(".progress-bar").attr("style", "width: 100%;");
 
 					// Hide Generating Scores...
 					$("#generating").hide();
@@ -737,6 +759,15 @@
 				$("#my-rank").text(individualData.rank + "/" + individualData.totalPlayers);
 				$("#my-streak").text(individualData.streak);
 				$("#my-accuracy").text(individualData.accuracy + "%");
+
+				// Color category list based on last answer
+				if (individualData.lastQuestionCorrect) {
+					$("." + individualData.lastQuestionID).addClass("correct");
+				} else {
+					$("." + individualData.lastQuestionID).addClass("incorrect");
+				}
+				
+
 			});
 
 			// Question control panel
@@ -745,6 +776,7 @@
 				socket.emit('questionTriggered', questionID);
 			});
 			socket.on('questionPresented', function (questionData) {
+
 				// Reset submitted answer
 				submittedAnswer = null;
 

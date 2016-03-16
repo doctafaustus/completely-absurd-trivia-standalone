@@ -18,6 +18,7 @@ request({
 	    }
 })
 var currentQuestion;
+var currentQuestionID;
 var questionsAsked = 0;
 var answersByPlayers = {
 	"a": 0,
@@ -53,6 +54,7 @@ io.on('connection', function (socket) {
 	clients[socket.id]["accuracy"] = 100;
 	clients[socket.id]["questionsAnswered"] = 0;
 	clients[socket.id]["questionsCorrect"] = 0;
+	clients[socket.id]["lastQuestionCorrect"] = false;
 	//clients[socket.id]["rank"] = 0;
 
 	// Rank players
@@ -159,7 +161,9 @@ io.on('connection', function (socket) {
 			streak: clients[socket.id]["streak"],
 			accuracy: clients[socket.id]["accuracy"],
 			rank: clients[socket.id]["rank"],
-			totalPlayers: Object.keys(clients).length
+			totalPlayers: Object.keys(clients).length,
+			lastQuestionID: currentQuestionID,
+			lastQuestionCorrect: clients[socket.id]["lastQuestionCorrect"]
 		};
 
 		socket.emit('showIndividualScores', individualData);
@@ -179,6 +183,7 @@ io.on('connection', function (socket) {
 
 		io.emit('questionPresented', {question: questionData[questionID] });
 		currentQuestion = questionData[questionID];
+		currentQuestionID = questionID;
 		questionsAsked += 1;
 
 		// Automatic Get Ranks 3 seconds after local question time has ended
@@ -222,7 +227,7 @@ io.on('connection', function (socket) {
 			};
 
 			io.emit('playersRanked', {playerData: playerData, extraData: { chart1: chart1 } });
-		}, 5000);
+		}, 7000);
 	});
 
 	// Answer question
@@ -233,9 +238,11 @@ io.on('connection', function (socket) {
 			clients[socket.id]["questionsCorrect"] += 1;
 			clients[socket.id]["score"] += 100;
 			clients[socket.id]["streak"] += 1;
+			clients[socket.id]["lastQuestionCorrect"] = true;
 		} else {
 			console.log("Incorrect");
 			clients[socket.id]["streak"] = 0;
+			clients[socket.id]["lastQuestionCorrect"] = false;
 		}
 		clients[socket.id]["accuracy"] = (clients[socket.id]["questionsCorrect"] / clients[socket.id]["questionsAnswered"] * 100).toFixed(0);
 
