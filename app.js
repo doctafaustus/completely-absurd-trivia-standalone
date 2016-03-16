@@ -19,6 +19,13 @@ request({
 })
 var currentQuestion;
 var questionsAsked = 0;
+var answersByPlayers = {
+	"a": 0,
+	"b": 0,
+	"c": 0,
+	"d": 0,
+	"No answer": 0
+};
 
 // ROUTES
 app.get('/', function(req, res) {
@@ -161,9 +168,61 @@ io.on('connection', function (socket) {
 	// Trigger question
 	socket.on('questionTriggered', function(questionID) {
 		console.log("Question triggered...");
+		// Reset answersByPlayers
+		answersByPlayers = {
+			"a": 0,
+			"b": 0,
+			"c": 0,
+			"d": 0,
+			"No answer": 0
+		};
+
 		io.emit('questionPresented', {question: questionData[questionID] });
 		currentQuestion = questionData[questionID];
 		questionsAsked += 1;
+
+		// Automatic Get Ranks 3 seconds after local question time has ended
+		setTimeout(function() {
+	    	console.log("Getting ranks...");
+			var playerData = rankPlayers();
+
+			// Put answersByPlayers into an array so it's usable for Highcharts
+			var answers = [];
+			for (key in answersByPlayers) {
+				answers.push(answersByPlayers[key]);
+			}
+
+			// Determine what position in the color array should hold the pink color for the answer
+			var colors = ['#1797FF', '#1797FF', '#1797FF', '#1797FF', '#1797FF'];
+			var position;
+			switch (currentQuestion["answer"]) {
+				case "a":
+					position = 0;
+					break;
+				case "b":
+					position = 1;
+					break;
+				case "c":
+					position = 2;
+					break;
+				case "d":
+					position = 3;
+					break;
+			}
+			colors[position] = "#FD00AF";
+
+
+			// Generate chart 1 data
+			var chart1 = {
+				title: currentQuestion["q"],
+				categories: [currentQuestion["a"], currentQuestion["b"], currentQuestion["c"], currentQuestion["d"], "No answer"],
+				questionsAsked: questionsAsked,
+				answersByPlayers: answers,
+				colors: colors
+			};
+
+			io.emit('playersRanked', {playerData: playerData, extraData: { chart1: chart1 } });
+		}, 5000);
 	});
 
 	// Answer question
@@ -179,7 +238,14 @@ io.on('connection', function (socket) {
 			clients[socket.id]["streak"] = 0;
 		}
 		clients[socket.id]["accuracy"] = (clients[socket.id]["questionsCorrect"] / clients[socket.id]["questionsAnswered"] * 100).toFixed(0);
-		console.log("Acccuracy " + clients[socket.id]["accuracy"]);
+
+		// Keep track of guessed answer for chart 1
+		if (submittedAnswer === null) {
+			answersByPlayers["No answer"]++;
+		} else {
+			answersByPlayers[submittedAnswer]++;
+		}
+
 	});
 
 

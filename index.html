@@ -240,6 +240,10 @@
 					<div class="question">
 						What is the closest planet to the Sun?
 					</div>
+					<div id="generating">
+						Generating Scores...<br>
+						<img src="loading.gif">
+					</div>
 					<div class="progress-container">
 						<div class="outer-progress">
 							<div class="progress-bar" style="width: 100%; margin-left: 0px;">&nbsp;</div>
@@ -262,12 +266,12 @@
 			<div id="left-col">
 				<div class="answers">
 					<div id="answers-inner">
-						<div class="a-b">
+						<div class="a-c">
 							<button class="answer hvr-hollow" id="A">Living in America</button>
-							<button class="answer hvr-hollow" id="B">Stevie Wonder</button>
+							<button class="answer hvr-hollow" id="C">Stevie Wonder</button>
 						</div>
-						<div class="c-d">
-							<button class="answer hvr-hollow" id="C">Lionel Richie</button>
+						<div class="b-d">
+							<button class="answer hvr-hollow" id="B">Lionel Richie</button>
 							<button class="answer hvr-hollow" id="D">James Browrafda asdf</button>
 						</div>
 					</div>
@@ -372,6 +376,14 @@
 	</div>
 	<script>
 		$(document).ready(function() {
+			var submittedAnswer = null;
+			$(".answer").click(function() {
+				submittedAnswer = $(this).attr("id").toLowerCase();
+				console.log("submittedAnswer: " + submittedAnswer);
+			});
+
+
+
 			// Category dropdown event handler
 			$(".category-section").click(function(e) {
 				e.preventDefault();
@@ -390,7 +402,6 @@
 					}
 				});	
 			}
-			//coolType("What is the closest planet to the Sun?");
 
 			function formatAnswerHeight() {
 				$(".answer").attr('style', 'height: inherit');
@@ -403,10 +414,6 @@
 				});
 
 				$(".answer").attr('style', 'height: ' + (maxHeight + 20) + 'px;');
-
-				// for (var i = 0; i < answers.length; i++) {
-				// 	$(answers[i]).css("line-height", maxHeight + "px");
-				// }
 			}
 			formatAnswerHeight();
 
@@ -417,18 +424,20 @@
 						width: "0%"
 					}, 
 					{
-						duration: 8000,
+						duration: 3000,
 						specialEasing: {
 							width: "linear"
 						},
 						complete: function() {
 							$(".answer").prop("disabled", true);
-							console.log("Progress bar finished.");
+
+							socket.emit("answerGuessed", submittedAnswer);
+
+							$("#generating").fadeIn();
 						}
 					}
 				);
 			}
-
 
 			// Answer selection
 			$(document).on('click', '.answer', function(e) {
@@ -518,6 +527,41 @@
 		            data: [1, 28, 4, 3, 1]
 		        }],
 		    });
+
+
+		    function generateChart1(data) {
+			    $('#chart1').highcharts({
+			        chart: {
+			            type: 'column'
+			        },
+			        plotOptions: {
+			            column: {
+			                colorByPoint: true
+			            }
+			        },
+			        colors: data.colors,
+			        credits: {
+			        	enabled: false
+			        },
+			        title: {
+			            text: data.title
+			        },
+			        xAxis: {
+			            categories: data.categories
+			        },
+			        yAxis: {
+			            title: {
+			                text: "Question " + data.questionsAsked + "/20"
+			            }
+			        },
+			        series: [{
+			        	showInLegend: false,
+			            name: 'Jane',
+			            data: data.answersByPlayers
+			        }],
+			    });
+		    }
+
 
 	        $('#chart2').highcharts({
 		        chart: {
@@ -670,6 +714,20 @@
 
 				// Get individual scores
 				socket.emit('getIndividualScores');
+
+				// Basically this checks to see if the playersRank event was triggered manually or automatically (automatic triggers should should specific data)
+				if (data.extraData) { 
+					// Reset timer bar
+					$(".outer-progress").attr("style", "width: 100%;");
+
+					// Hide Generating Scores...
+					$("#generating").hide();
+
+					// Generate chart 1
+					generateChart1(data.extraData.chart1);
+
+					console.log(data.extraData);
+				}
 			});
 
 			// Show individual scores
@@ -687,6 +745,9 @@
 				socket.emit('questionTriggered', questionID);
 			});
 			socket.on('questionPresented', function (questionData) {
+				// Reset submitted answer
+				submittedAnswer = null;
+
 				// Show question with answers
 				coolType(questionData.question.q);
 				$("#A").text(questionData.question.a);
@@ -708,16 +769,6 @@
 				// Reset button styles
 				$(".answer").prop("disabled", false).removeClass("selected");
 			});
-
-			// Answer question
-			$(".answer").click(function() {
-				var submittedAnswer = $(this).attr("id").toLowerCase();
-				socket.emit("answerGuessed", submittedAnswer);
-			});
-
-
-
-
 
 
 			// Admin stuff

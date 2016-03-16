@@ -173,6 +173,15 @@ h1, h2, h3, h4, h5 ,h6 {
 	clear: both;
 	height: 378px;
 }
+#generating {
+	display: none;
+    position: absolute;
+    bottom: 0;
+    text-align: center;
+    z-index: 10;
+    width: 100%;
+    color: white;
+}
 .question-container-desktop, .question-container-mobile {
 	background-color: gray;
 	background-image: url(question-bg.jpg);
@@ -225,20 +234,20 @@ h1, h2, h3, h4, h5 ,h6 {
 	display: table-cell;
     vertical-align: middle;
 }
-.a-b, .c-d {
+.a-c, .b-d {
 	width: 50%;
 	text-align: center;
 }
-.a-b {
+.a-c {
 	float: left;
 }
-.c-d {
+.b-d {
 	float: right;
 }
-.a-b .answer {
+.a-c .answer {
 	margin-left: 32px;
 }
-.c-d .answer {
+.b-d .answer {
 	margin-right: 32px;
 }
 .answer {
