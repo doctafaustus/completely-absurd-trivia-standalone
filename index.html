@@ -62,7 +62,10 @@
 			</ul>
 		</div>
 		<div id="sidebar">
-
+			
+			<div id="question-count">
+				Question <span id="question-num">0</span> of 20
+			</div>
 			<h2 class="category-title">Leaders</h2>
 			<div id="prize-section">
 				<ul id="prize-board">
@@ -236,6 +239,7 @@
 			<div id="console">
 				<div class="question-container-desktop">
 					<div class="question-image-container">
+
 						<img id="question-image" src="http://i.imgur.com/gfElT1J.png">
 					</div>
 					<div class="question">
@@ -596,7 +600,7 @@
 			        },
 			        series: [{
 			        	showInLegend: false,
-			            name: 'Jane',
+			            name: 'Players',
 			            data: data.answersByPlayers
 			        }],
 			    });
@@ -623,11 +627,13 @@
 		        },
 		        xAxis: {
 		            categories: [
-		                '0 - 100',
-		                '101 - 200',
-		                '201 - 300',
-		                '301 - 400',
-		                "401 - 500"
+		            	"50000+",
+		            	"4000 - 4999",
+		            	"3000 - 3999",
+		            	"2000 - 2999",
+		            	"1000 - 1999",
+		            	"500 - 999",
+		            	"0 - 499"
 		            ]
 		        },
 		        yAxis: {
@@ -638,9 +644,54 @@
 		        series: [{
 		        	showInLegend: false,
 		            name: 'Players',
-		            data: [1, 8, 4, 3, 1]
+		            data: [0, 0, 0, 0, 0, 0, 0]
 		        }],
 	        });
+
+
+	        function generateChart2 (levelsArray) {
+		        $('#chart2').highcharts({
+			        chart: {
+			            type: 'bar'
+			        },
+			        plotOptions: {
+			            column: {
+			                colorByPoint: true
+			            }
+			        },
+			        colors: [
+			            '#FD00AF',
+			            ],
+			        credits: {
+			        	enabled: false
+			        },
+			        title: {
+			            text: 'Player Scores'
+			        },
+			        xAxis: {
+			            categories: [
+			            	"50000+",
+			            	"4000 - 4999",
+			            	"3000 - 3999",
+			            	"2000 - 2999",
+			            	"1000 - 1999",
+			            	"500 - 999",
+			            	"0 - 499"
+			            ]
+			        },
+			        yAxis: {
+			            title: {
+			                text: 'Players'
+			            }
+			        },
+			        series: [{
+			        	showInLegend: false,
+			            name: 'Players',
+			            data: levelsArray
+			        }],
+		        });
+	        }
+
 
 		    $('#chart3').highcharts({
 		        credits: {
@@ -678,13 +729,59 @@
 		            colorByPoint: true,
 		            data: [{
 		                name: 'Correct',
-		                y: 56
+		                y: 100
 		            }, {
 		                name: 'Incorrect',
-		                y: 24
+		                y: 0
 		            }]
 		        }]
 		    });
+
+		    function generateChart3(accuracy) {
+			    $('#chart3').highcharts({
+			        credits: {
+			        		enabled: false
+			        },
+			        chart: {
+			            plotBackgroundColor: null,
+			            plotBorderWidth: null,
+			            plotShadow: false,
+			            type: 'pie'
+			        },
+			        colors: [
+			        	'#1797FF',
+			            '#FD00AF'
+			        ],
+			        title: {
+			            text: 'Accuracy'
+			        },
+			        tooltip: {
+			            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+			        },
+			        plotOptions: {
+			            pie: {
+			                dataLabels: {
+			                    enabled: true,
+			                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+			                    style: {
+			                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+			                    }
+			                }
+			            }
+			        },
+			        series: [{
+			            name: 'Questions',
+			            colorByPoint: true,
+			            data: [{
+			                name: 'Correct',
+			                y: accuracy
+			            }, {
+			                name: 'Incorrect',
+			                y: 100 - accuracy
+			            }]
+			        }]
+			    });
+		    }
 
 
 	        // Hide chat - show piechart
@@ -747,8 +844,10 @@
 
 					// Generate chart 1
 					generateChart1(data.extraData.chart1);
+					// Generate chart 2
+					generateChart2(data.playerData.chart2);
 
-					console.log(data.extraData);
+					console.log(data);
 				}
 			});
 
@@ -767,6 +866,9 @@
 					$("." + individualData.lastQuestionID).addClass("incorrect");
 				}
 				
+				// Generate chart 3
+				generateChart3(Number(individualData.accuracy));
+				console.log(Number(individualData.accuracy));
 
 			});
 
@@ -776,6 +878,8 @@
 				socket.emit('questionTriggered', questionID);
 			});
 			socket.on('questionPresented', function (questionData) {
+				// Increment question counter at top of page
+				$("#question-num").text(questionData.questionNum + 1);
 
 				// Reset submitted answer
 				submittedAnswer = null;

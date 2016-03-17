@@ -193,6 +193,11 @@ h1, h2, h3, h4, h5 ,h6 {
 .question-container-mobile {
 	display: none;
 }
+#question-count {
+	color: white;
+	text-align: center;
+	margin-top: 25px;
+}
 .question-image-container {
 	text-align: center;
 }

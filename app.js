@@ -138,6 +138,45 @@ io.on('connection', function (socket) {
 		var goat = sortedClients[Math.floor(Math.random() * sortedClients.length)];
 		playerData.goat = goat.name;
 
+
+		// Generate chart 2 data
+		var pointLevels = {
+			"l_0-499": 0,
+			"l_500-999": 0,
+			"l_1000-1999": 0,
+			"l_2000-2999": 0,
+			"l_3000-3999": 0,
+			"l_4000-4999": 0,
+			"l_5000+": 0
+		};
+
+		for (var i = 0; i < sortedClients.length; i++) {
+			if (sortedClients[i].score <= 499) {
+				pointLevels["l_0-499"]++;
+			} else if (sortedClients[i].score <= 999) {
+				pointLevels["l_500-999"]++;
+			} else if (sortedClients[i].score <= 1999) {
+				pointLevels["l_1000-1999"]++;
+			} else if (sortedClients[i].score <= 2999) {
+				pointLevels["l_2000-2999"]++;
+			} else if (sortedClients[i].score <= 3999) {
+				pointLevels["l_3000-3999"]++;
+			} else if (sortedClients[i].score <= 4999) {
+				pointLevels["l_4000-4999"]++;
+			} else if (sortedClients[i].score >= 5000) {
+				pointLevels["l_5000+"]++;
+			}
+		}
+
+		// Convert pointLevels values into an array that's usable for chart 2
+		var levels = [];
+		for (key in pointLevels) {
+			levels.push(pointLevels[key]);
+		}
+
+		playerData.chart2 = levels.reverse();
+
+
 		return playerData;
 	}
 
@@ -181,7 +220,7 @@ io.on('connection', function (socket) {
 			"No answer": 0
 		};
 
-		io.emit('questionPresented', {question: questionData[questionID] });
+		io.emit('questionPresented', {question: questionData[questionID], questionNum: questionsAsked });
 		currentQuestion = questionData[questionID];
 		currentQuestionID = questionID;
 		questionsAsked += 1;
@@ -216,7 +255,6 @@ io.on('connection', function (socket) {
 			}
 			colors[position] = "#FD00AF";
 
-
 			// Generate chart 1 data
 			var chart1 = {
 				title: currentQuestion["q"],
@@ -226,17 +264,22 @@ io.on('connection', function (socket) {
 				colors: colors
 			};
 
+
 			io.emit('playersRanked', {playerData: playerData, extraData: { chart1: chart1 } });
 		}, 7000);
 	});
 
 	// Answer question
 	socket.on('answerGuessed', function(submittedAnswer) {
+		// Get question point value by adding 00 to end of the last character in the question id
+		var pointValue = currentQuestionID[currentQuestionID.length - 1];
+		pointValue = Number(pointValue + "00");
+
 		clients[socket.id]["questionsAnswered"] += 1;
 		if (submittedAnswer === currentQuestion.answer) {
 			console.log("Correct!");
 			clients[socket.id]["questionsCorrect"] += 1;
-			clients[socket.id]["score"] += 100;
+			clients[socket.id]["score"] += pointValue;
 			clients[socket.id]["streak"] += 1;
 			clients[socket.id]["lastQuestionCorrect"] = true;
 		} else {
