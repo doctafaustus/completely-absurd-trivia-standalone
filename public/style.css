@@ -421,9 +421,15 @@ button:disabled, button:disabled:hover {
     z-index: 20;
     padding-bottom: 3px;
 }
-#admin-message-text {
+#admin-message-inner {
 	width: 95%;
 	margin: 0 auto;
+}
+#admin-message-inner img {
+	padding-top: 2px;
+    vertical-align: middle;
+    padding-bottom: 2px;
+    padding-right: 3px;
 }
 #new-messages {
 	display: none;

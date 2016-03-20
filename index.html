@@ -242,7 +242,7 @@
 				</div>
 			</header>
 			<div id="console">
-					<iframe id="video" src="http://player.twitch.tv/?channel=clowd150" frameborder="0" scrolling="no" height="378" width="626"></iframe>
+<!-- 					<iframe id="video" src="http://player.twitch.tv/?channel=clowd150" frameborder="0" scrolling="no" height="378" width="626"></iframe> -->
 				<div class="question-container-desktop">
 					<div class="question-image-container">
 
@@ -306,7 +306,10 @@
 				</div>
 				<div id="chat">
 					<div id="admin-message">
-						<div id="admin-message-text"></div>
+						<div id="admin-message-inner">
+							<img src="admin-chat-icon.png">
+							<span id="admin-message-text"></span>
+						</div>
 					</div>
 					<div id="new-messages">
 						More comments below
@@ -518,7 +521,9 @@
 		    var scrollPosition = ""; // Keep track of scroll position
 		    $("#chat-messages").mCustomScrollbar({
 		    	theme: "dark",
-			    callbacks:{
+		    	scrollInertia: 0,
+		    	advanced:{ updateOnContentResize: true, updateOnSelectorChange: ".message-row" },
+			    callbacks: {
 			        whileScrolling:function() {
 			        	scrollPosition = this.mcs.topPct;
 			        }
@@ -533,45 +538,44 @@
 
 			// Create custom event to keep track of messages
 			$(document).on("checkChatPosition", function() {
+				// Message cleanup
+				if ($(".message-row").length > 50) {
+					console.log("greater than 50");
+					$(".message-row").first().remove();
+				}
+
+				console.info(scrollPosition);
+				console.log($(".message-row").length);
 				if (scrollPosition <= 90 && $(".message-row").length > 14) {
 					$("#new-messages").fadeIn(200);
 				} else {
-					$("#chat-messages").mCustomScrollbar("scrollTo","bottom", {
-				   		scrollInertia:300
-					});
+					$("#chat-messages").mCustomScrollbar("scrollTo","bottom");
 				}
+
 			});
 
 
 			$("#new-messages").click(function() {
 				$(this).fadeOut(200);
-				$("#chat-messages").mCustomScrollbar("scrollTo","bottom", {
-				    scrollInertia:300
-				});
+				$("#chat-messages").mCustomScrollbar("scrollTo","bottom");
 			});
 
 
 		    // Keep scrollbar at bottom
 		    setTimeout(function() { // FireFox needs a small delay
-				$("#chat-messages").mCustomScrollbar("scrollTo","bottom", {
-				    scrollInertia:300
-				});
+				$("#chat-messages").mCustomScrollbar("scrollTo","bottom");
 		    }, 600);
 
 			setTimeout(function() {
 				var message = '<li class="message-row"><img class="user-icon" src="avatars/new-wesner.png"><span class="chat-user">New Wesner</span><span class="message">This is a new messages, jsut so you know</span></li>';$("#mCSB_1_container").append(message);
 				if (scrollPosition > 90 || !touchedScroll) { // If user has scrolled up then don't move the scrollbar for them
-					$("#chat-messages").mCustomScrollbar("scrollTo","bottom", {
-			    		scrollInertia:300
-					});
+					$("#chat-messages").mCustomScrollbar("scrollTo","bottom");
 				}
 			}, 1500);
 			setTimeout(function() {
 				var message = '<li class="message-row"><img class="user-icon" src="avatars/new-wesner.png"><span class="chat-user">New Wesner</span><span class="message">This is a new messages, jsut so you know</span></li>';$("#mCSB_1_container").append(message);
 				if (scrollPosition > 90 || !touchedScroll) {
-					$("#chat-messages").mCustomScrollbar("scrollTo","bottom", {
-					    scrollInertia:300
-					});
+					$("#chat-messages").mCustomScrollbar("scrollTo","bottom");
 				}
 			}, 4500);
 
@@ -993,26 +997,30 @@
 
 
 			// Chat send
+			var lastMessageSent;
+			var sentAny = false;
 			$("#chat-form").submit(function(e) {
+				var currentMessageTime = new Date().getTime();
+
+				//console.log(currentMessageTime - lastMessageSent);
+
+				// Prevent message from being sent if last message was less than 3 seconds ago
+				if (currentMessageTime - lastMessageSent < 3000) {
+					alert("Please wait a bit before sending multiple messages");
+					return false;
+				}
+
 				e.preventDefault();
 				var message = $("#message-input").val();
 				socket.emit("send-message", message);
 				$("#message-input").val("");
+
+				lastMessageSent = currentMessageTime;
 			});
 
 			// Chat receive
 			socket.on("incoming-message", function(message) {
 				var message = '<li class="message-row"><img class="user-icon" src="avatars/new-wesner.png"><span class="chat-user">New Wesner</span><span class="message">' + message + '</span></li>';$("#mCSB_1_container").append(message);
-				if (scrollPosition > 90) {
-					$("#chat-messages").mCustomScrollbar("scrollTo","bottom", {
-					    scrollInertia:300
-					});
-				}
-
-				// Message cleanup
-				if ($(".message-row").length > 100) {
-					$(".message-row").first().remove();
-				}
 
 				// Trigger 
 				$(document).trigger("checkChatPosition");
@@ -1042,11 +1050,12 @@
     		});
 
 
+
+
 			// Admin layout stuff
 			if ($("#admin-bar").is(":visible")) {
 				$("#wrapper").attr("style", "max-width: 1800px;");
 			}
-
 			// Admin annoucement
 			$("#admin-form").submit(function(e) {
 				e.preventDefault();
@@ -1055,7 +1064,7 @@
 				socket.emit("admin-send-message", message);
 			});
 			socket.on("admin-incoming-message", function(message) {
-				$("#admin-message-text").text("Admin Message: " + message);
+				$("#admin-message-text").text("Admin: " + message);
 				$("#admin-message").show();
 			});
 			$("#admin-hide").click(function() {
