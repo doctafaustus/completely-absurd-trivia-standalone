@@ -274,7 +274,7 @@ io.on('connection', function (socket) {
 
 
 			io.emit('playersRanked', {playerData: playerData, extraData: { chart1: chart1 } });
-		}, 7000);
+		}, 8500);
 	});
 
 	// Answer question

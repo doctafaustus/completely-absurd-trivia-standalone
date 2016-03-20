@@ -315,7 +315,7 @@
 						More comments below
 					</div>
 					<ul id="chat-messages">
-						<li class="message-row">
+<!-- 						<li class="message-row">
 							<span class="chat-user">Elite Dude</span><span class="message">The*</span>
 						</li>
 						<li class="message-row">
@@ -370,7 +370,7 @@
 						</li>
 						<li class="message-row">
 							<img class="user-icon" src="avatars/gavyn-wesner.png"><span class="chat-user">Gavyn Wesner</span><span class="message">how do you know</span>
-						</li>
+						</li> -->
 					</ul>
 					<div id="chat-control">
 						<form id="chat-form">
@@ -420,7 +420,6 @@
 
 
 			function coolType(string) {
-				timerBar();
 				$(".question").data('typed', null).typed({
 					strings: [string],
 					contentType: "text",
@@ -428,9 +427,13 @@
 					showCursor: false,
 					callback: function() {
 						// IMPORTANT - don't run the timer in the callback function (if the window is inactive there will be a delay before it is run)
-						console.log('coolType finished');
 					}
 				});	
+
+				// Wait 3 seconds setting off rolling timer bar
+				setTimeout(function() {
+					timerBar();
+				}, 2000);
 			}
 
 			function timerBar() {
@@ -533,8 +536,12 @@
 
 			// Create custom event to keep track of messages
 			$(document).on("checkChatPosition", function() {
-				if (scrollPosition <= 90) {
+				if (scrollPosition <= 90 && $(".message-row").length > 14) {
 					$("#new-messages").fadeIn(200);
+				} else {
+					$("#chat-messages").mCustomScrollbar("scrollTo","bottom", {
+				   		scrollInertia:300
+					});
 				}
 			});
 
@@ -948,7 +955,7 @@
 				fastAnswer = false;
 
 				// Hide correct bar
-				$(".correct-indicator").slideUp(500); // (Hide)
+				$(".correct-indicator").hide(); // (Hide)
 				$("#bonus-amount").html("");
 
 				// Remove old classes on answers
