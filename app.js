@@ -19,6 +19,8 @@ request({
 })
 var currentQuestion;
 var currentQuestionID;
+var currentQuestionAnswer;
+var currentQuestionPointValue;
 var questionsAsked = 0;
 var answersByPlayers = {
 	"a": 0,
@@ -54,7 +56,7 @@ io.on('connection', function (socket) {
 	clients[socket.id]["accuracy"] = 100;
 	clients[socket.id]["questionsAnswered"] = 0;
 	clients[socket.id]["questionsCorrect"] = 0;
-	clients[socket.id]["lastQuestionCorrect"] = false;
+	clients[socket.id]["currentQuestionCorrect"] = false;
 	//clients[socket.id]["rank"] = 0;
 
 	// Rank players
@@ -201,8 +203,10 @@ io.on('connection', function (socket) {
 			accuracy: clients[socket.id]["accuracy"],
 			rank: clients[socket.id]["rank"],
 			totalPlayers: Object.keys(clients).length,
-			lastQuestionID: currentQuestionID,
-			lastQuestionCorrect: clients[socket.id]["lastQuestionCorrect"]
+			currentQuestionID: currentQuestionID,
+			currentQuestionCorrect: clients[socket.id]["currentQuestionCorrect"],
+			currentQuestionAnswer: currentQuestionAnswer,
+			currentQuestionPointValue: currentQuestionPointValue
 		};
 
 		socket.emit('showIndividualScores', individualData);
@@ -223,7 +227,11 @@ io.on('connection', function (socket) {
 		io.emit('questionPresented', {question: questionData[questionID], questionNum: questionsAsked });
 		currentQuestion = questionData[questionID];
 		currentQuestionID = questionID;
+		currentQuestionAnswer = currentQuestion["answer"];
 		questionsAsked += 1;
+		// Get question point value by adding 00 to end of the last character in the question id
+		currentQuestionPointValue = currentQuestionID[currentQuestionID.length - 1];
+		currentQuestionPointValue = Number(currentQuestionPointValue + "00");
 
 		// Automatic Get Ranks 3 seconds after local question time has ended
 		setTimeout(function() {
@@ -270,22 +278,21 @@ io.on('connection', function (socket) {
 	});
 
 	// Answer question
-	socket.on('answerGuessed', function(submittedAnswer) {
-		// Get question point value by adding 00 to end of the last character in the question id
-		var pointValue = currentQuestionID[currentQuestionID.length - 1];
-		pointValue = Number(pointValue + "00");
-
+	socket.on('answerGuessed', function(submittedAnswer, fastAnswer) {
 		clients[socket.id]["questionsAnswered"] += 1;
 		if (submittedAnswer === currentQuestion.answer) {
 			console.log("Correct!");
 			clients[socket.id]["questionsCorrect"] += 1;
-			clients[socket.id]["score"] += pointValue;
+			clients[socket.id]["score"] += currentQuestionPointValue;
 			clients[socket.id]["streak"] += 1;
-			clients[socket.id]["lastQuestionCorrect"] = true;
+			clients[socket.id]["currentQuestionCorrect"] = true;
+			if (fastAnswer) {
+				clients[socket.id]["score"] += 50;
+			}
 		} else {
 			console.log("Incorrect");
 			clients[socket.id]["streak"] = 0;
-			clients[socket.id]["lastQuestionCorrect"] = false;
+			clients[socket.id]["currentQuestionCorrect"] = false;
 		}
 		clients[socket.id]["accuracy"] = (clients[socket.id]["questionsCorrect"] / clients[socket.id]["questionsAnswered"] * 100).toFixed(0);
 
@@ -296,6 +303,12 @@ io.on('connection', function (socket) {
 			answersByPlayers[submittedAnswer]++;
 		}
 
+	});
+
+
+	// Incoming message
+	socket.on("send-message", function(message) {
+		io.emit("incoming-message", message);
 	});
 
 

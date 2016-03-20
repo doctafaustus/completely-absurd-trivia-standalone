@@ -281,6 +281,21 @@ button:disabled, button:disabled:hover {
 	color: black;
 	box-shadow: inset 0 0 0 4px #AFAFAF, 0 0 1px rgba(0, 0, 0, 0);
 }
+/*@keyframes blink { 50% { background-color: white !important; }  }
+.blink {
+	animation: blink .3s step-end infinite alternate; 
+	-webkit-animation-iteration-count: 4;
+    animation-iteration-count: 4;
+}*/
+.correct-answer {
+	box-shadow: inset 0 0 0 4px lime, 0 0 1px rgba(0, 0, 0, 0) !important;
+	background-color: lime !important;
+}
+.incorrect-answer {
+	box-shadow: inset 0 0 0 4px red, 0 0 1px rgba(0, 0, 0, 0) !important;
+	background-color: red !important;
+	color: white !important;
+}
 .progress-container {
 	position: absolute;
 	left: 0;
@@ -300,6 +315,26 @@ button:disabled, button:disabled:hover {
 }
 .outer-progress {
 	margin-top: 20px;
+}
+.correct-indicator {
+	background-color: #151515;
+	text-align: center;
+	color: white;
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	right: 0;
+    padding-top: 5px;
+    padding-bottom: 4px;
+    font-size: 18px;
+    color: lime;
+    display: none;
+}
+#correct-amount {
+	color: #1797FF;
+}
+#bonus-amount {
+	color: #FD00AF;
 }
 #my-scores {
 	border-top: solid 2px black;
@@ -343,6 +378,9 @@ button:disabled, button:disabled:hover {
 	width: 625px;
 	height: 1006px;
 }
+#chat {
+	position: relative;
+}
 #chat-messages {
 	height: 388px;
 	padding-left: 14px;
@@ -372,6 +410,19 @@ button:disabled, button:disabled:hover {
 	border-top: solid 1px rgb(226, 226, 226);
 	padding: 5px 0 5px 0;
 	overflow: auto;
+}
+#new-messages {
+	display: none;
+    position: absolute;
+    background-color: #1797FF;
+    color: white;
+    cursor: pointer;
+    width: 100%;
+    bottom: 66px;
+    height: 25px;
+    text-align: center;
+    padding-top: 4px;
+    z-index: 20;
 }
 #my-icon {
 	margin-left: 15px;

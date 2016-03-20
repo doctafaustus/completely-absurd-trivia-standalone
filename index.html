@@ -243,7 +243,7 @@
 						<img id="question-image" src="http://i.imgur.com/gfElT1J.png">
 					</div>
 					<div class="question">
-						What is the closest planet to the Sun?
+						Welcome to Completely Useless Trivia
 					</div>
 					<div id="generating">
 						Generating Scores...<br>
@@ -254,8 +254,12 @@
 							<div class="progress-bar" style="width: 100%; margin-left: 0px;">&nbsp;</div>
 						</div>
 					</div>
+					<div class="correct-indicator">
+						<span id="correct-amount"></span>
+						<span id="bonus-amount"></span>
+					</div>
 				</div>
-<!-- 				<iframe id="video" src="http://player.twitch.tv/?channel=clowd150" frameborder="0" scrolling="no" height="378" width="626"></iframe> -->
+				<iframe id="video" src="http://player.twitch.tv/?channel=clowd150" frameborder="0" scrolling="no" height="378" width="626"></iframe>
 					<!-- NOTE: enabling a second mobile container will cause animate and typed to run callbacks twice since there are two classes for progress-container and question! -->
 <!-- 				<div class="question-container-mobile">
 					<div class="question">
@@ -272,12 +276,12 @@
 				<div class="answers">
 					<div id="answers-inner">
 						<div class="a-c">
-							<button class="answer hvr-hollow" id="A">Living in America</button>
-							<button class="answer hvr-hollow" id="C">Stevie Wonder</button>
+							<button class="answer hvr-hollow" id="A">&nbsp;</button>
+							<button class="answer hvr-hollow" id="C">&nbsp;</button>
 						</div>
 						<div class="b-d">
-							<button class="answer hvr-hollow" id="B">Lionel Richie</button>
-							<button class="answer hvr-hollow" id="D">James Browrafda asdf</button>
+							<button class="answer hvr-hollow" id="B">&nbsp;</button>
+							<button class="answer hvr-hollow" id="D">&nbsp;</button>
 						</div>
 					</div>
 				</div>
@@ -307,6 +311,9 @@
 					<div id="chart3"></div>
 				</div>
 				<div id="chat">
+					<div id="new-messages">
+						More comments below
+					</div>
 					<ul id="chat-messages">
 						<li class="message-row">
 							<span class="chat-user">Elite Dude</span><span class="message">The*</span>
@@ -366,24 +373,39 @@
 						</li>
 					</ul>
 					<div id="chat-control">
-						<img class="user-icon" id="my-icon" src="avatar.jpg"><input type="text" id="message-input" placeholder="Say something...">
+						<form id="chat-form">
+							<img class="user-icon" id="my-icon" src="avatar.jpg">
+							<input type="text" id="message-input" placeholder="Say something...">
+						</form>
 					</div>
 					<div id="chat-bottom">
 						<a href="#" id="hide-chat">HIDE CHAT</a>
 					</div>
 				</div>
 
-				<div id="chart2">
-
-				</div>
+				<div id="chart2"></div>
 			</div>
 		</div>
 	</div>
 	<script>
 		$(document).ready(function() {
+			var timeStart = 0;
+			var timeEnd = 0;
+			var answerTime = 0;
+			var fastAnswer = false;
+			var touchedScroll = false;
 
+			// Initially disable answer buttons
+			$(".answer").prop("disabled", true);
+
+			// Register answer and track answer speed
 			var submittedAnswer = null;
 			$(".answer").click(function() {
+				timeEnd = new Date().getTime();
+				answerTime = timeEnd - timeStart;
+				fastAnswer = answerTime < 3000 ? true : false;
+				console.log(answerTime);
+				console.log(fastAnswer);
 				submittedAnswer = $(this).attr("id").toLowerCase();
 				console.log("submittedAnswer: " + submittedAnswer);
 			});
@@ -412,11 +434,12 @@
 			}
 
 			function timerBar() {
+				timeStart = new Date().getTime();
 				$(".progress-bar").transition({ width: 0 }, 5000, 'linear', function() {
-					$(".answer").prop("disabled", true);
-					socket.emit("answerGuessed", submittedAnswer);
-					$("#generating").fadeIn();
-					console.log("done!");
+						$(".answer").prop("disabled", true);
+						socket.emit("answerGuessed", submittedAnswer, fastAnswer);
+						$("#generating").fadeIn();
+						console.log("done!");
 				});
 
 				//$(".outer-progress").attr('style', 'height: 5px;');
@@ -502,31 +525,54 @@
 			    }
 			});
 
+			// Track if user has touched scrollbar
+			$(".mCSB_draggerContainer").click(function() {
+				touchedScroll = true;
+			});
+
+
+			// Create custom event to keep track of messages
+			$(document).on("checkChatPosition", function() {
+				if (scrollPosition <= 90) {
+					$("#new-messages").fadeIn(200);
+				}
+			});
+
+
+			$("#new-messages").click(function() {
+				$(this).fadeOut(200);
+				$("#chat-messages").mCustomScrollbar("scrollTo","bottom", {
+				    scrollInertia:300
+				});
+			});
+
+
 		    // Keep scrollbar at bottom
 		    setTimeout(function() { // FireFox needs a small delay
 				$("#chat-messages").mCustomScrollbar("scrollTo","bottom", {
 				    scrollInertia:300
 				});
-		    }, 500);
-
-
+		    }, 600);
 
 			setTimeout(function() {
 				var message = '<li class="message-row"><img class="user-icon" src="avatars/new-wesner.png"><span class="chat-user">New Wesner</span><span class="message">This is a new messages, jsut so you know</span></li>';$("#mCSB_1_container").append(message);
-				if (scrollPosition > 90) { // If user has scrolled up then don't move the scrollbar for them
+				if (scrollPosition > 90 || !touchedScroll) { // If user has scrolled up then don't move the scrollbar for them
 					$("#chat-messages").mCustomScrollbar("scrollTo","bottom", {
-			    scrollInertia:300
-			});
+			    		scrollInertia:300
+					});
 				}
 			}, 1500);
 			setTimeout(function() {
 				var message = '<li class="message-row"><img class="user-icon" src="avatars/new-wesner.png"><span class="chat-user">New Wesner</span><span class="message">This is a new messages, jsut so you know</span></li>';$("#mCSB_1_container").append(message);
-				if (scrollPosition > 90) {
+				if (scrollPosition > 90 || !touchedScroll) {
 					$("#chat-messages").mCustomScrollbar("scrollTo","bottom", {
 					    scrollInertia:300
 					});
 				}
 			}, 4500);
+
+			
+
 
 			// Charts
 		    $('#chart1').highcharts({
@@ -836,9 +882,6 @@
 
 				// Basically this checks to see if the playersRank event was triggered manually or automatically (automatic triggers should should specific data)
 				if (data.extraData) { 
-					// Reset timer bar
-					$(".progress-bar").attr("style", "width: 100%;");
-
 					// Hide Generating Scores...
 					$("#generating").hide();
 
@@ -854,22 +897,41 @@
 			// Show individual scores
 			socket.on("showIndividualScores", function(individualData) {
 				console.log(individualData);
+
+				// Popular main score panel
 				$("#my-score").text(individualData.score);
 				$("#my-rank").text(individualData.rank + "/" + individualData.totalPlayers);
 				$("#my-streak").text(individualData.streak);
 				$("#my-accuracy").text(individualData.accuracy + "%");
 
 				// Color category list based on last answer
-				if (individualData.lastQuestionCorrect) {
-					$("." + individualData.lastQuestionID).addClass("correct");
+				if (individualData.currentQuestionCorrect) {
+					$("." + individualData.currentQuestionID).addClass("correct");
 				} else {
-					$("." + individualData.lastQuestionID).addClass("incorrect");
+					$("." + individualData.currentQuestionID).addClass("incorrect");
 				}
 				
+				// Save reference to correct answer
+				var correctAnswer = individualData.currentQuestionAnswer.toUpperCase();
+
+				// Show correct or incorrect messaging
+				if (individualData.currentQuestionCorrect) {
+					// Fast Answer
+					if (individualData.currentQuestionCorrect && fastAnswer) {
+						$("#bonus-amount").html("<br>+50 Fast Answer");
+					}
+					$("#correct-amount").text("+" + individualData.currentQuestionPointValue);
+
+					$(".correct-indicator").slideDown(500); // (Show)
+					$("#" + correctAnswer).addClass("blink");
+					$("#" + correctAnswer).addClass("correct-answer");
+				} else {
+					$("#" + correctAnswer).addClass("incorrect-answer");
+				}
+
 				// Generate chart 3
 				generateChart3(Number(individualData.accuracy));
 				console.log(Number(individualData.accuracy));
-
 			});
 
 			// Question control panel
@@ -877,7 +939,26 @@
 				var questionID = $(this).attr('id');
 				socket.emit('questionTriggered', questionID);
 			});
-			socket.on('questionPresented', function (questionData) {
+
+			socket.on('questionPresented', function(questionData) {
+				// Reset time to answer values
+				timeStart = 0;
+				timeEnd = 0;
+				answerTime = 0;
+				fastAnswer = false;
+
+				// Hide correct bar
+				$(".correct-indicator").slideUp(500); // (Hide)
+				$("#bonus-amount").html("");
+
+				// Remove old classes on answers
+				$(".answer").removeClass("blink");
+				$(".answer").removeClass("correct-answer");
+				$(".answer").removeClass("incorrect-answer");
+
+				// Reset timer bar
+				$(".progress-bar").attr("style", "width: 100%;");
+
 				// Increment question counter at top of page
 				$("#question-num").text(questionData.questionNum + 1);
 
@@ -907,7 +988,33 @@
 			});
 
 
-			// Admin stuff
+			// Chat send
+			$("#chat-form").submit(function(e) {
+				e.preventDefault();
+				var message = $("#message-input").val();
+				socket.emit("send-message", message);
+				$("#message-input").val("");
+			});
+
+
+			socket.on("incoming-message", function(message) {
+				var message = '<li class="message-row"><img class="user-icon" src="avatars/new-wesner.png"><span class="chat-user">New Wesner</span><span class="message">' + message + '</span></li>';$("#mCSB_1_container").append(message);
+				if (scrollPosition > 90) {
+					$("#chat-messages").mCustomScrollbar("scrollTo","bottom", {
+					    scrollInertia:300
+					});
+				}
+
+				// Message cleanup
+				if ($(".message-row").length > 100) {
+					$(".message-row").first().remove();
+				}
+
+				// Trigger 
+				$(document).trigger("checkChatPosition");
+			});
+
+			// Admin layout stuff
 			if ($("#admin-bar").is(":visible")) {
 				$("#wrapper").attr("style", "max-width: 1800px;");
 			}
