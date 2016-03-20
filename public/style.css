@@ -227,7 +227,7 @@ h1, h2, h3, h4, h5 ,h6 {
 	clear: both;
 	float: left;
 	width: 756px;
-	height: 1000px;
+	height: 936px;
 }
 .answers {
 	height: 231px;
@@ -376,7 +376,7 @@ button:disabled, button:disabled:hover {
 	float: right;
 	height: 1000px;
 	width: 625px;
-	height: 1006px;
+	height: 936px;
 }
 #chat {
 	position: relative;
@@ -410,6 +410,20 @@ button:disabled, button:disabled:hover {
 	border-top: solid 1px rgb(226, 226, 226);
 	padding: 5px 0 5px 0;
 	overflow: auto;
+}
+#admin-message {
+	display: none;
+    background: #FD00AF;
+    color: white;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 20;
+    padding-bottom: 3px;
+}
+#admin-message-text {
+	width: 95%;
+	margin: 0 auto;
 }
 #new-messages {
 	display: none;
@@ -491,57 +505,52 @@ button:disabled, button:disabled:hover {
 
 
 
-/*@media (max-width: 1617px) {
-	#console {
-		height: inherit;
-	}
-	.question-container-desktop {
-		display: none;
-	}
-    .question-container-mobile {
-        display: block;
-        margin: 0 auto;
-        float: none;
-        width: 620px;
-        height: 162px;
-        background-position: center;
-    }
-    .question-container-mobile .question {
-    	font-size: 27px;
-    	padding: 0 43px;
-    }
-    #video {
-    	display: block;
-    	margin: 0 auto;
-    	float: none;
-    }
-	#left-col {
-		float: none;
-		width: 100%;
-		border: 0;
-	}
-	.a-b, .c-d {
-		float: none;
-		width: 100%;
-	}
-	.answer {
-		width: 80%;
-	}
-	.a-b .answer {
-		margin-left: 0;
-	}
-	.c-d .answer {
-		margin-right: 0;
+@media (min-width: 1617px) {
+	#wrapper {
+		min-width: 1600px;
+		max-width: 1600px;
 	}
 }
-@media (max-width: 900px) {
-	#logo-text {
-		display: block;
-		text-align: center;
-		float: none;
-		width: inherit;
+@media (max-width: 1615px) {
+	#wrapper {
+		width: 973px;
+	}
+	header {
+		width: 505px;
+		overflow: auto;
+		margin: 0 auto;
 	}
 	#header-right {
 		display: none;
 	}
-}*/
+	#video {
+		float: none;
+		width: 100%;
+		height: 275px;
+	}
+	.question-container-desktop {
+		margin-top: -5px;
+	}
+	#left-col, #right-col {
+		float: none;
+	}
+	#left-col {
+		height: 1278px;
+	}
+	#right-col {
+		height: 381px;
+		width: 756px;
+	}
+	#my-scores {
+		border-right: 0;
+	}
+	#chat {
+		border-bottom: solid 2px black;
+	}
+	#chat-bottom {
+		padding-bottom: 10px;
+	}
+	#sidebar {
+		height: 2400px;
+	}
+}

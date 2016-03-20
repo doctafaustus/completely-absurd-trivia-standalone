@@ -311,6 +311,23 @@ io.on('connection', function (socket) {
 		io.emit("incoming-message", message);
 	});
 
+	// Incoming admin message
+    socket.on("admin-send-message", function(message) {
+    	io.emit("admin-incoming-message", message);
+    });
+
+    // Show admin message (in case of late arrivals)
+    socket.on("admin-hide-triggered", function() {
+    	io.emit("admin-hide");
+    });
+
+
+	// Remove client form clients object on disconnect
+    socket.on('disconnect', function() {
+        console.log(socket.id + " disconnected");
+        delete clients[socket.id];
+    });
+
 
 });
 

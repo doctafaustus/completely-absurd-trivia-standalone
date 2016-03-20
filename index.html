@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
-	<title>Completely Useless Trivia</title>
+	<title>Completely Absurd Trivia</title>
 	<link href='https://fonts.googleapis.com/css?family=Roboto:400,900,700' rel='stylesheet' type='text/css'>
 	<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300,600,700' rel='stylesheet' type='text/css'>
 	<link rel="stylesheet" type="text/css" href="normalize.css">
@@ -60,6 +60,11 @@
 				<li><button id="c4-q4" class="question-trigger">400</button></li>
 				<li><button id="c4-q5" class="question-trigger">500</button></li>
 			</ul>
+			<form id="admin-form">
+				<label>Admin Announcement</label><br>
+				<input type="text" id="admin-input">
+			</form>
+			<button id="admin-hide">Hide Message</button>
 		</div>
 		<div id="sidebar">
 			
@@ -230,20 +235,21 @@
 		<div id="main">
 			<header>
 				<img src="logo.png" id="logo">
-				<h1 id="logo-text">Completely Useless Trivia</h1>
+				<h1 id="logo-text">Completely Absurd Trivia</h1>
 				<div id="header-right">
 					<img id="avatar" src="avatar.jpg">
 					<span id="username">VeryNice251</span>
 				</div>
 			</header>
 			<div id="console">
+					<iframe id="video" src="http://player.twitch.tv/?channel=clowd150" frameborder="0" scrolling="no" height="378" width="626"></iframe>
 				<div class="question-container-desktop">
 					<div class="question-image-container">
 
 						<img id="question-image" src="http://i.imgur.com/gfElT1J.png">
 					</div>
 					<div class="question">
-						Welcome to Completely Useless Trivia
+						Welcome to Completely Absurd Trivia
 					</div>
 					<div id="generating">
 						Generating Scores...<br>
@@ -259,18 +265,6 @@
 						<span id="bonus-amount"></span>
 					</div>
 				</div>
-				<iframe id="video" src="http://player.twitch.tv/?channel=clowd150" frameborder="0" scrolling="no" height="378" width="626"></iframe>
-					<!-- NOTE: enabling a second mobile container will cause animate and typed to run callbacks twice since there are two classes for progress-container and question! -->
-<!-- 				<div class="question-container-mobile">
-					<div class="question">
-						What is the closest planet to the Sun?
-					</div>
-					<div class="progress-container">
-						<div class="outer-progress">
-							<div class="progress-bar" style="width: 100%; margin-left: 0px;">&nbsp;</div>
-						</div>
-					</div>
-				</div> -->
 			</div>
 			<div id="left-col">
 				<div class="answers">
@@ -311,6 +305,9 @@
 					<div id="chart3"></div>
 				</div>
 				<div id="chat">
+					<div id="admin-message">
+						<div id="admin-message-text"></div>
+					</div>
 					<div id="new-messages">
 						More comments below
 					</div>
@@ -602,26 +599,26 @@
 		        	enabled: false
 		        },
 		        title: {
-		            text: 'What is the closest planet to the Sun?'
+		            text: 'Question Results'
 		        },
 		        xAxis: {
 		            categories: [
-		                'Living in America',
-		                'Lionel Richie',
-		                'Stevie Wonder',
-		                'James Brown',
-		                "No answer"
+		                '',
+		                '',
+		                '',
+		                '',
+		                ""
 		            ]
 		        },
 		        yAxis: {
 		            title: {
-		                text: 'Question 1/20'
+		                text: 'Question 0/20'
 		            }
 		        },
 		        series: [{
 		        	showInLegend: false,
 		            name: 'Players',
-		            data: [1, 28, 4, 3, 1]
+		            data: [0, 0, 0, 0, 0]
 		        }],
 		    });
 
@@ -1003,7 +1000,7 @@
 				$("#message-input").val("");
 			});
 
-
+			// Chat receive
 			socket.on("incoming-message", function(message) {
 				var message = '<li class="message-row"><img class="user-icon" src="avatars/new-wesner.png"><span class="chat-user">New Wesner</span><span class="message">' + message + '</span></li>';$("#mCSB_1_container").append(message);
 				if (scrollPosition > 90) {
@@ -1021,10 +1018,52 @@
 				$(document).trigger("checkChatPosition");
 			});
 
+			// Move video based on window size
+
+			var chat = $("#chat");
+			function resize() {
+				var width = $(window).width();
+				if (width < 1600 && chat.attr("class") !== "chat-mobile") {
+					// Move chat
+					$("#chart1").before(chat);
+					chat.addClass("chat-mobile");
+					chat.after($("#chart3-container"));
+
+				} else if (width >= 1600) {
+					chat.removeClass("chat-mobile");
+					$("#chart2").before(chat);
+					chat.before($("#chart3-container"));
+				}
+			}
+
+			resize();
+			$(window).resize(function() {
+				resize();
+    		});
+
+
 			// Admin layout stuff
 			if ($("#admin-bar").is(":visible")) {
 				$("#wrapper").attr("style", "max-width: 1800px;");
 			}
+
+			// Admin annoucement
+			$("#admin-form").submit(function(e) {
+				e.preventDefault();
+				var message = $("#admin-input").val();
+				$("#admin-input").val("");
+				socket.emit("admin-send-message", message);
+			});
+			socket.on("admin-incoming-message", function(message) {
+				$("#admin-message-text").text("Admin Message: " + message);
+				$("#admin-message").show();
+			});
+			$("#admin-hide").click(function() {
+				socket.emit("admin-hide-triggered");
+			});
+			socket.on("admin-hide", function() {
+				$("#admin-message").hide();
+			});
 		});
 	</script>
 </body>
