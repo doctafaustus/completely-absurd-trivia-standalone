@@ -423,6 +423,7 @@ button:disabled, button:disabled:hover {
 }
 #admin-message-inner {
 	width: 95%;
+	padding-top: 3px;
 	margin: 0 auto;
 }
 #admin-message-inner img {
@@ -516,6 +517,9 @@ button:disabled, button:disabled:hover {
 		min-width: 1600px;
 		max-width: 1600px;
 	}
+	.admin-wrapper {
+		max-width: 1800px !important;
+	}
 }
 @media (max-width: 1615px) {
 	#wrapper {
@@ -558,5 +562,8 @@ button:disabled, button:disabled:hover {
 	}
 	#sidebar {
 		height: 2400px;
+	}
+	.admin-wrapper {
+		width: 1173px !important;
 	}
 }

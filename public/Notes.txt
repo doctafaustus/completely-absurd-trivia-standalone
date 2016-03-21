@@ -31,3 +31,27 @@ https://image.freepik.com/free-vector/blue-sunbeam-background_91-6147.jpg
 
 Stre.am
 Cannot use because there's a chat you can't disable. If you click on the window an overlay will pop up.
+
+
+STRUCTURE
+Make an account no matter what to play
+Purchase to play game 2
+
+LANDING PAGE
+Video intro showing gameplay
+Features
+Crafting non-live game with points from trivia Recipes as bonus prizes
+Friends list - can keep score on main interface
+can trade with friends
+Titles/Ranks based on crafts
+
+
+BUSINESS MODEL
+Sponsored craft items
+
+
+EXTRA
+Categorize badge levels (super perfect game shouldn't factor into ingredients)
+
+
+

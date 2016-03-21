@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Crafting Center</title>
+	<script src="interact.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<style>
+		#outer-dropzone {
+		  height: 340px;
+		}
+
+		#inner-dropzone {
+		  height: 180px;
+		}
+
+		.dropzone {
+		  background-color: #ccc;
+		  border: dashed 4px transparent;
+		  border-radius: 4px;
+		  margin: 10px auto 30px;
+		  padding: 10px;
+		  width: 80%;
+		  transition: background-color 0.3s;
+		}
+
+		.drop-active {
+		  border-color: #aaa;
+		}
+
+		.drop-target {
+		  background-color: #29e;
+		  border-color: #fff;
+		  border-style: solid;
+		}
+
+		.drag-drop {
+		  display: inline-block;
+		  min-width: 40px;
+		  padding: 2em 0.5em;
+
+		  color: #fff;
+		  background-color: #29e;
+		  border: solid 2px #fff;
+
+		  -webkit-transform: translate(0px, 0px);
+		   transform: translate(0px, 0px);
+
+		  transition: background-color 0.3s;
+		}
+
+		.drag-drop.can-drop {
+		  color: #000;
+		  background-color: #FD00AF;
+		}
+	</style>
+</head>
+<body>
+	<div id="no-drop" class="draggable drag-drop"> #no-drop </div>
+
+	<div id="yes-drop" class="draggable drag-drop"> #yes-drop </div>
+	<div id="underwear" class="draggable drag-drop">
+		<img src="crafting/underwear.jpg">
+	</div>
+	<div id="poop" class="draggable drag-drop">
+		<img src="crafting/poop.jpg">
+	</div>
+
+<div id="outer-dropzone" class="dropzone">
+  #outer-dropzone
+  <div id="inner-dropzone" class="dropzone">#inner-dropzone</div>
+ </div>
+
+   <script>
+   		var inDropZone = [];
+   		function pushIfNew(element, arr) {
+			for (var i = 0; i < arr.length; i++) {
+				if (arr[i] === element) {
+					return;
+				}
+			}
+			arr.push(element);
+		}
+
+		// target elements with the "draggable" class
+		interact('.draggable')
+		  .draggable({
+		    // enable inertial throwing
+		    inertia: true,
+		    // keep the element within the area of it's parent
+		    restrict: {
+		      restriction: "parent",
+		      endOnly: true,
+		      elementRect: { top: 0, left: 0, bottom: 1, right: 1 }
+		    },
+		    // enable autoScroll
+		    autoScroll: true,
+
+		    // call this function on every dragmove event
+		    onmove: dragMoveListener,
+		    // call this function on every dragend event
+		    onend: function (event) {
+		      var textEl = event.target.querySelector('p');
+
+		      textEl && (textEl.textContent =
+		        'moved a distance of '
+		        + (Math.sqrt(event.dx * event.dx +
+		                     event.dy * event.dy)|0) + 'px');
+		    }
+		  });
+
+		// enable draggables to be dropped into this
+		interact('.dropzone').dropzone({
+		  // only accept elements matching this CSS selector
+		  //accept: '#yes-drop',
+		  // Require a 75% element overlap for a drop to be possible
+		  overlap: 0.75,
+
+		  // listen for drop related events:
+
+		  ondropactivate: function (event) {
+		    // add active dropzone feedback
+		    event.target.classList.add('drop-active');
+		  },
+		  ondragenter: function (event) {
+		    var draggableElement = event.relatedTarget,
+		        dropzoneElement = event.target;
+
+		    // feedback the possibility of a drop
+		    dropzoneElement.classList.add('drop-target');
+		    draggableElement.classList.add('can-drop');
+		    //draggableElement.textContent = 'Dragged in';
+		  },
+		  ondragleave: function (event) {
+		    // remove the drop feedback style
+		    event.target.classList.remove('drop-target');
+		    event.relatedTarget.classList.remove('can-drop');
+		    //event.relatedTarget.textContent = 'Dragged out';
+		  },
+		  ondrop: function (event) {
+		    //event.relatedTarget.textContent = 'Dropped';
+		    console.log($(event.relatedTarget).attr("id"));
+		    pushIfNew($(event.relatedTarget).attr("id"), inDropZone);
+		    console.log(inDropZone);
+		    unfortunateAccident(inDropZone);
+		  },
+		  ondropdeactivate: function (event) {
+		    // remove active dropzone feedback
+		    event.target.classList.remove('drop-active');
+		    event.target.classList.remove('drop-target');
+		  }
+		});
+
+		function dragMoveListener (event) {
+			var target = event.target,
+			    // keep the dragged position in the data-x/data-y attributes
+			    x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
+			    y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+
+			// translate the element
+			target.style.webkitTransform =
+			target.style.transform =
+			  'translate(' + x + 'px, ' + y + 'px)';
+
+			// update the position attributes
+			target.setAttribute('data-x', x);
+			target.setAttribute('data-y', y);
+		}
+
+		function unfortunateAccident(arr) {
+			if (arr.length === 2) {
+				if (arr.indexOf("underwear") > -1 && arr.indexOf("poop") > -1) {
+					$("body").append("<img src='crafting/dirty-underwear.jpg'>");
+				}
+			}
+		}
+
+   </script>
+</body>
+</html>
