@@ -130,19 +130,25 @@ io.on('connection', function (socket) {
 	//socket.emit('news', { hello: 'world' });
 
 	// Create a clients object that contains each player as a subobject
-	clients[socket.id] = {};
-	clients[socket.id]["name"] = socket.id.substring(0, 8);
-	clients[socket.id]["score"] = 0;
-	clients[socket.id]["streak"] = 0;
-	clients[socket.id]["accuracy"] = 100;
-	clients[socket.id]["questionsAnswered"] = 0;
-	clients[socket.id]["questionsCorrect"] = 0;
-	clients[socket.id]["currentQuestionCorrect"] = false;
-	clients[socket.id]["badges"] = [];
+	clients[socket.id] = {
+		name: socket.id.substring(0, 8),
+		score: 0,
+		streak: 0,
+		highStreak: 0,
+		accuracy: 100,
+		questionsAnswered: 0,
+		questionsCorrect: 0,
+		currentQuestionCorrect: false,
+		badges: [],
+		cat1: 0,
+		cat2: 0,
+		cat3: 0,
+		cat4: 0
+	};
 	//clients[socket.id]["rank"] = 0;
 
 	// Rank players
-	function rankPlayers() {
+	function rankPlayers(endGame) {
 
 		var playerData = {};
 
@@ -181,12 +187,12 @@ io.on('connection', function (socket) {
 		var highestScorePlayer = "";
 		for (var i = 0; i < sortedClients.length; i++) {
 			if (sortedClients[i].score === highestScore) {
-				highestScorePlayer = sortedClients[i].name;
+				highestScorePlayer = sortedClients[i];
 				break;
 			}
 		}
 		playerData.highestScoreData = {};
-		playerData.highestScoreData.highestScorePlayer = highestScorePlayer;
+		playerData.highestScoreData.highestScorePlayer = highestScorePlayer.name;
 		playerData.highestScoreData.highestScoreNumber = highestScore;
 
 		// Generate Correct %
@@ -260,8 +266,72 @@ io.on('connection', function (socket) {
 
 		playerData.chart2 = levels.reverse();
 
+		if (endGame) {
+			// Assign badges
+			for (var i = 0; i < sortedClients.length; i++) {
+				if (sortedClients[i].rank === 1) { // 1st Place
+					sortedClients[i].badges.push(badges.firstPlace);
+				} 
+				if (sortedClients[i].rank === 2) { // 2nd Place
+					sortedClients[i].badges.push(badges.secondPlace);
+				}
+				if (sortedClients[i].rank === 3) { // 3rd Place
+					sortedClients[i].badges.push(badges.thirdPlace);
+				}
+				if (sortedClients[i].highStreak >= 3) { // 3x Streak
+					sortedClients[i].badges.push(badges.threeStreak);
+				}
+				if (sortedClients[i].highStreak >= 5) { // 5x Streak
+					sortedClients[i].badges.push(badges.fiveStreak);
+				}
+				if (sortedClients[i].highStreak >= 10) { // 10x Streak
+					sortedClients[i].badges.push(badges.tenStreak);
+				}
+				if (sortedClients[i].highStreak >= 15) { // 15x Streak
+					sortedClients[i].badges.push(badges.fifteenStreak);
+				}
+				if (sortedClients[i].accuracy >= 75) { // 75%+ Accuracy
+					sortedClients[i].badges.push(badges.seventyFiveAccuracy);
+				}
+				if (sortedClients[i].accuracy >= 75) { // Goat of the Game
+					goat.badges.push(badges.goatOfTheGame);
+				}
+				if (sortedClients[i].score === 0) { // Loser
+					sortedClients[i].badges.push(badges.loser);
+				}
+				if (sortedClients[i].questionsCorrect === 20) { // Perfect Game
+					sortedClients[i].badges.push(badges.perfectGame);
+				}
+				if (sortedClients[i].rank > 3 && sortedClients[i].rank < 11) { // Top Ten
+					sortedClients[i].badges.push(badges.topTen);
+				}
+				if (sortedClients[i].accuracy === highestAccuracy) { // Highest Accuracy
+					sortedClients[i].badges.push(badges.highestAccuracy);
+				}
+				if (sortedClients[i].streak === highestStreak) { // Highest Streak
+					sortedClients[i].badges.push(badges.highestStreak);
+				}
+				if (sortedClients[i].cat1 === 5) { // Category 1
+					sortedClients[i].badges.push(badges.category1);
+				}
+				if (sortedClients[i].cat2 === 5) { // Category 2
+					sortedClients[i].badges.push(badges.category2);
+				}
+				if (sortedClients[i].cat3 === 5) { // Category 3
+					sortedClients[i].badges.push(badges.category3);
+				}
+				if (sortedClients[i].cat4 === 5) { // Category 4
+					sortedClients[i].badges.push(badges.category4);
+				}
+				// First Game Badge Needed
+			}
 
-		return playerData;
+
+
+		} else {
+			return playerData;
+		}
+
 	}
 
 
@@ -367,9 +437,25 @@ io.on('connection', function (socket) {
 			clients[socket.id]["questionsCorrect"] += 1;
 			clients[socket.id]["score"] += currentQuestionPointValue;
 			clients[socket.id]["streak"] += 1;
+			clients[socket.id]["highStreak"] += 1;
 			clients[socket.id]["currentQuestionCorrect"] = true;
 			if (fastAnswer) {
 				clients[socket.id]["score"] += 50;
+			}
+			var catNumber = currentQuestionID[1];
+			switch(catNumber) {
+				case 1:
+					clients[socket.id].cat1 += 1;
+					break;
+				case 2:
+					clients[socket.id].cat2 += 1;
+					break;
+				case 3:
+					clients[socket.id].cat3 += 1;
+					break;
+				case 4:
+					clients[socket.id].cat4 += 1;
+					break;
 			}
 		} else {
 			console.log("Incorrect");
@@ -412,9 +498,7 @@ io.on('connection', function (socket) {
 
     // End game
     socket.on("end-game", function() {
-    	// Assign badges
-    	// 1st Place
-
+    	rankPlayers(true);
     });
 
 });
