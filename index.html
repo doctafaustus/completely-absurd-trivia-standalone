@@ -1106,11 +1106,15 @@
 			// Hide everything except the video
 			$("#end-game").click(function() {
 				socket.emit("end-game");
-				// $("#left-col, #right-col, .question-container-desktop").fadeToggle(function() {
-				// 		$("#console").attr("style", "text-align: center; height: 420px; margin-bottom: 10px;");
-				// 		$("#video").attr("style", "float: none;");
-				// 		$("#game-results-title").slideDown();
-				// });
+				$("#left-col, #right-col, .question-container-desktop").fadeToggle(function() {
+						$("#console").attr("style", "text-align: center; height: 420px; margin-bottom: 10px;");
+						$("#video").attr("style", "float: none;");
+						$("#game-results-title").slideDown();
+				});
+			});
+			socket.on("game-over", function(resultTable) {
+				$("#stats table tbody").append(resultTable);
+				console.log(resultTable);
 			});
 
 			

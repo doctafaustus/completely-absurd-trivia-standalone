@@ -183,7 +183,6 @@ io.on('connection', function (socket) {
 
 		// Generate Most Points
 		var highestScore = Math.max.apply(Math,sortedClients.map(function(o){return o.score;}));
-		console.log("Highest Score: " + highestScore);
 		var highestScorePlayer = "";
 		for (var i = 0; i < sortedClients.length; i++) {
 			if (sortedClients[i].score === highestScore) {
@@ -197,10 +196,9 @@ io.on('connection', function (socket) {
 
 		// Generate Correct %
 		var highestAccuracy = Math.max.apply(Math,sortedClients.map(function(o){return o.accuracy;}));
-		console.log("Highest Acccuracy: " + highestAccuracy);
 		var highestAccuracyPlayer = "";
 		for (var i = 0; i < sortedClients.length; i++) {
-			if (sortedClients[i].accuracy === highestAccuracy) {
+			if (sortedClients[i].accuracy == highestAccuracy) {
 				highestAccuracyPlayer = sortedClients[i].name;
 				break;
 			}
@@ -211,7 +209,6 @@ io.on('connection', function (socket) {
 
 		// Generate Best Streak
 		var highestStreak = Math.max.apply(Math,sortedClients.map(function(o){return o.streak;}));
-		console.log("Highest Streak: " + highestStreak);
 		var highestStreakPlayer = "";
 		for (var i = 0; i < sortedClients.length; i++) {
 			if (sortedClients[i].streak === highestStreak) {
@@ -267,6 +264,8 @@ io.on('connection', function (socket) {
 		playerData.chart2 = levels.reverse();
 
 		if (endGame) {
+			var resultTable = "";
+
 			// Assign badges
 			for (var i = 0; i < sortedClients.length; i++) {
 				if (sortedClients[i].rank === 1) { // 1st Place
@@ -323,9 +322,24 @@ io.on('connection', function (socket) {
 				if (sortedClients[i].cat4 === 5) { // Category 4
 					sortedClients[i].badges.push(badges.category4);
 				}
+				var userBadges = "";
+				for (j = 0; j < sortedClients[i].badges.length; j++) {
+					console.log(sortedClients[i].badges[j]);
+					userBadges += "<img src='" + sortedClients[i].badges[j].href + "'>";
+				}
+
 				// First Game Badge Needed
+				resultTable += 	"<tr>\
+									<td>" + sortedClients[i].rank + "</td>\
+									<td>" + sortedClients[i].name + "</td>\
+									<td>" + sortedClients[i].score + "</td>\
+									<td>" + sortedClients[i].highStreak + "</td>\
+									<td>" + sortedClients[i].accuracy + "%</td>\
+									<td>" + userBadges + "</td>\
+								</tr>";
 			}
 
+			return resultTable;
 
 
 		} else {
@@ -498,7 +512,8 @@ io.on('connection', function (socket) {
 
     // End game
     socket.on("end-game", function() {
-    	rankPlayers(true);
+    	var resultTable = rankPlayers(true);
+    	io.emit("game-over", resultTable);
     });
 
 });
