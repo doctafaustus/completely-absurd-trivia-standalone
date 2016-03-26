@@ -30,6 +30,87 @@ var answersByPlayers = {
 	"No answer": 0
 };
 
+var badges = {
+	firstPlace: {
+		title: "1st Place",
+		href: "badges/1st-place-badge.png"
+	},
+  	secondPlace: {
+  		title: "2nd Place",
+  		href: "badges/2nd-place-badge.png"
+  	},
+  	thirdPlace: {
+  		title: "3rd Place",
+  		href: "badges/3rd-place-badge.png"
+  	},
+  	threeStreak: {
+  		title: "3x Streak",
+  		href: "badges/3x-badge.png"
+  	},
+  	fiveStreak: {
+  		title: "5x Streak",
+  		href: "badges/5x-badge.png"
+  	},
+  	tenStreak: {
+  		title: "10x Streak",
+  		href: "badges/10x-badge.png"
+  	},
+  	fifteenStreak: {
+  		title: "15x Streak",
+  		href: "badges/15x-badge.png"
+  	},
+  	seventyFiveAccuracy: {
+  		title: "On Point",
+  		href: "badges/75-percent-accuracy-badge.png"
+  	},
+  	firstGame: {
+  		title: "Newbie",
+  		href: "badges/first-game-badge.png"
+  	},
+  	goatOfTheGame: {
+  		title: "Goat of the Game",
+  		"href": "badges/goat-of-the-game-badge.png"
+  	},
+  	highestAccuracy: {
+  		title: "Poindexter",
+  		href: "badges/highest-accuracy-badge.png"
+  	},
+  	highestStreak: {
+  		title: "On Fire",
+  		href: "badges/highest-streak-badge.png"
+  	},
+  	loser: {
+  		title: "Total Loser",
+  		href: "badges/loser-badge.png"
+  	},
+  	perfectGame: {
+  		title: "Hail to the Chief",
+  		href: "badges/perfect-game-badge.png"
+  	},
+  	topTen: {
+  		title: "Elitist",
+  		href: "badges/top-ten-badge.png"
+  	},
+  	category1: {
+  		title: "Disgusting Food Master",
+  		href: "badges/disgusting-food-badge.png"
+  	},
+  	category2: {
+  		title: "Hot Pot Master",
+  		href: "badges/hot-pot-badge.png"
+  	},
+  	category3: {
+  		title: "Pics of Your Mom Master",
+  		href: "badges/pics-of-your-mom-badge.png"
+  	},
+  	category4: {
+  		title: "Memes Master",
+  		href: "badges/memes-badge"
+  	}
+
+};
+
+
 // ROUTES
 app.get('/', function(req, res) {
 	res.sendFile(__dirname + '/index.html');
@@ -57,6 +138,7 @@ io.on('connection', function (socket) {
 	clients[socket.id]["questionsAnswered"] = 0;
 	clients[socket.id]["questionsCorrect"] = 0;
 	clients[socket.id]["currentQuestionCorrect"] = false;
+	clients[socket.id]["badges"] = [];
 	//clients[socket.id]["rank"] = 0;
 
 	// Rank players
@@ -328,6 +410,12 @@ io.on('connection', function (socket) {
         delete clients[socket.id];
     });
 
+    // End game
+    socket.on("end-game", function() {
+    	// Assign badges
+    	// 1st Place
+
+    });
 
 });
 

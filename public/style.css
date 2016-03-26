@@ -508,6 +508,65 @@ button:disabled, button:disabled:hover {
 	height: 325px;
 	padding-top: 70px;
 }
+#game-results-title {
+	display: none;
+	font-size: 30px;
+	font-weight: bold;
+	margin-bottom: 15px;
+}
+#badges-received {
+	margin-top: 40px;
+	padding: 0 10px 30px 10px;
+	text-align: center;
+	border-bottom: solid 2px black;
+}
+#badges-received h2 {
+	font-size: 30px;
+	margin-bottom: 15px;
+}
+#stats {
+	padding: 0 20px;
+}
+#stats h2 {
+	font-size: 30px;
+	text-align: center;
+}
+#stats table {
+	width: 100%;
+	border-collapse: collapse;
+	border: solid 1px black;
+	background-color: #2B2B2B;
+	color: white;
+}
+#stats table tr:hover {
+	background-color: #151515;
+}
+#stats table th {
+	border: solid 1px black;
+	height: 30px;
+	background-color: #1797FF;
+}
+#stats table td {
+	border: solid 1px rgba(128, 128, 128, 0.31);
+	text-align: center;
+	height: 30px;
+}
+#stats table td img {
+	width: 27px;
+	vertical-align: top;
+}
+.rank-row, .score-row, .streak-row, .accuracy-row {
+	width: 10%;
+}
+.player-row {
+	width: 30%;
+}
+.badges-row {
+	width: 30%;
+}
+
+
+
 
 
 

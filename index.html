@@ -65,6 +65,7 @@
 				<input type="text" id="admin-input">
 			</form>
 			<button id="admin-hide">Hide Message</button>
+			<button id="end-game">End Game</button>
 		</div>
 		<div id="sidebar">
 			
@@ -242,6 +243,9 @@
 				</div>
 			</header>
 			<div id="console">
+					<div id="game-results-title">
+						Final Results
+					</div>
 <!-- 					<iframe id="video" src="http://player.twitch.tv/?channel=clowd150" frameborder="0" scrolling="no" height="378" width="626"></iframe> -->
 				<div class="question-container-desktop">
 					<div class="question-image-container">
@@ -385,10 +389,58 @@
 
 				<div id="chart2"></div>
 			</div>
+
+
+			<!-- Results Section -->
+			<div id="results-section">
+				<div id="badges-received">
+					<h2>Badges Awarded</h2>
+					<img src="badges/1st-place-badge.png">
+				</div>
+
+				<div id="stats">
+					<h2>Player Statistics</h2>
+					<table>
+						<tr>
+							<th class="rank-row">Rank</th>
+							<th class="player-row">Player</th>
+							<th class="score-row">Score</th>
+							<th class="streak-row">Best Streak</th>
+							<th class="accuracy-row">Accuracy</th>
+							<th class="badges-row">Badges Awarded</th>
+						</tr>
+						<tr>
+							<td>1</td>
+							<td>VeryNice251</td>
+							<td>1000</td>
+							<td>3</td>
+							<td>75%</td>
+							<td><img src="badges/2nd-place-badge.png"><img src="badges/3rd-place-badge.png"></td>
+						</tr>
+						<tr>
+							<td>2</td>
+							<td>AceDauntless</td>
+							<td>900</td>
+							<td>5</td>
+							<td>45%</td>
+							<td></td>
+						</tr>
+						<tr>
+							<td>3</td>
+							<td>Gargantuan</td>
+							<td>800</td>
+							<td>3</td>
+							<td>75%</td>
+							<td></td>
+						</tr>
+					</table>
+				</div>
+			</div>
 		</div>
 	</div>
 	<script>
 		$(document).ready(function() {
+			var endGame = true;
 			var timeStart = 0;
 			var timeEnd = 0;
 			var answerTime = 0;
@@ -1049,6 +1101,19 @@
 				resize();
     		});
 
+
+			// End Game
+			// Hide everything except the video
+			$("#end-game").click(function() {
+				socket.emit("end-game");
+				// $("#left-col, #right-col, .question-container-desktop").fadeToggle(function() {
+				// 		$("#console").attr("style", "text-align: center; height: 420px; margin-bottom: 10px;");
+				// 		$("#video").attr("style", "float: none;");
+				// 		$("#game-results-title").slideDown();
+				// });
+			});
+
+			
 
 
 
