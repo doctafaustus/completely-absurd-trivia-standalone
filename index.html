@@ -395,7 +395,27 @@
 			<div id="results-section">
 				<div id="badges-received">
 					<h2>Badges Awarded</h2>
-					<img src="badges/1st-place-badge.png">
+					<ul id="badges-received-list">
+						<li>
+							<div class="badge-title">
+								1st Place
+							</div>
+							<img src="badges/1st-place-badge.png">
+							<div class="badge-description">
+								Score the most points in a game.
+							</div>
+						</li>
+						<li>
+							<div class="badge-title">
+								1st Place
+							</div>
+							<img src="badges/1st-place-badge.png">
+							<div class="badge-description">
+								Score the most points in a game.
+							</div>
+						</li>
+					</ul>
+
 				</div>
 
 				<div id="stats">
@@ -408,30 +428,6 @@
 							<th class="streak-row">Best Streak</th>
 							<th class="accuracy-row">Accuracy</th>
 							<th class="badges-row">Badges Awarded</th>
-						</tr>
-						<tr>
-							<td>1</td>
-							<td>VeryNice251</td>
-							<td>1000</td>
-							<td>3</td>
-							<td>75%</td>
-							<td><img src="badges/2nd-place-badge.png"><img src="badges/3rd-place-badge.png"></td>
-						</tr>
-						<tr>
-							<td>2</td>
-							<td>AceDauntless</td>
-							<td>900</td>
-							<td>5</td>
-							<td>45%</td>
-							<td></td>
-						</tr>
-						<tr>
-							<td>3</td>
-							<td>Gargantuan</td>
-							<td>800</td>
-							<td>3</td>
-							<td>75%</td>
-							<td></td>
 						</tr>
 					</table>
 				</div>
@@ -1105,6 +1101,7 @@
 			// End Game
 			// Hide everything except the video
 			$("#end-game").click(function() {
+				$("#results-section").show();
 				socket.emit("end-game");
 				$("#left-col, #right-col, .question-container-desktop").fadeToggle(function() {
 						$("#console").attr("style", "text-align: center; height: 420px; margin-bottom: 10px;");
@@ -1114,9 +1111,11 @@
 			});
 			socket.on("game-over", function(resultTable) {
 				$("#stats table tbody").append(resultTable);
-				console.log(resultTable);
+				socket.emit("get-individual-badges");
 			});
-
+			socket.on("badges-returned", function(badges) {
+				console.log(badges);
+			});
 			
 
 

@@ -508,6 +508,9 @@ button:disabled, button:disabled:hover {
 	height: 325px;
 	padding-top: 70px;
 }
+#results-section {
+	display: none;
+}
 #game-results-title {
 	display: none;
 	font-size: 30px;
@@ -522,7 +525,22 @@ button:disabled, button:disabled:hover {
 }
 #badges-received h2 {
 	font-size: 30px;
-	margin-bottom: 15px;
+	margin-bottom: 25px;
+}
+#badges-received-list {
+	list-style-type: none;
+}
+#badges-received-list li {
+	margin: 0 10px;
+	width: 165px;
+	display: inline-block;
+}
+.badge-title {
+	font-weight: bold;
+	margin-bottom: 14px;
+}
+.badge-description {
+	margin-top: 5px;
 }
 #stats {
 	padding: 0 20px;
