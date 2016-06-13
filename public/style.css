@@ -399,12 +399,13 @@ button:disabled, button:disabled:hover {
 .user-icon {
 	width: 24px;
 	vertical-align: middle;
-	padding-right: 12px;
+	border-radius: 50%;
 }
 .chat-user {
 	color: rgba(0, 0, 0, 0.541176);
 	font-size: 13px;
 	margin-right: 15px;
+	padding-left: 12px;
 }
 #chat-control {
 	border-top: solid 1px rgb(226, 226, 226);
@@ -457,6 +458,7 @@ button:disabled, button:disabled:hover {
 	float: left;
 	height: 30px;
 	border: 0;
+	margin-left: 12px;
 }
 #chat-bottom {
 	text-align: center;
@@ -534,6 +536,8 @@ button:disabled, button:disabled:hover {
 	margin: 0 10px;
 	width: 165px;
 	display: inline-block;
+	vertical-align: top;
+	margin-bottom: 20px;
 }
 .badge-title {
 	font-weight: bold;
@@ -582,10 +586,23 @@ button:disabled, button:disabled:hover {
 .badges-row {
 	width: 30%;
 }
-
-
-
-
+.badge-div {
+	position: relative;
+}
+.badge-info {
+	display: inline-block;
+}
+.badge-description-table {
+	display: none;
+}
+.badge-hover-over {
+	position: absolute;
+	background: black;
+	display: none;
+	top: -23px;
+	left: 0;
+	right: 0;
+}
 
 
 
@@ -642,5 +659,8 @@ button:disabled, button:disabled:hover {
 	}
 	.admin-wrapper {
 		width: 1173px !important;
+	}
+	.badge-hover-over {
+		top: -43px;
 	}
 }

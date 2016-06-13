@@ -246,7 +246,7 @@
 					<div id="game-results-title">
 						Final Results
 					</div>
-<!-- 					<iframe id="video" src="http://player.twitch.tv/?channel=clowd150" frameborder="0" scrolling="no" height="378" width="626"></iframe> -->
+					<iframe id="video" src="http://player.twitch.tv/?channel=clowd150" frameborder="0" scrolling="no" height="378" width="626"></iframe>
 				<div class="question-container-desktop">
 					<div class="question-image-container">
 
@@ -352,8 +352,6 @@
 						<li class="message-row">
 							<img class="user-icon" src="avatars/gavyn-wesner.png"><span class="chat-user">Gavyn Wesner</span><span class="message">how do you know</span>
 						</li>
-
-
 						<li class="message-row">
 							<img class="user-icon" src="avatars/gold-playz.png"><span class="chat-user">Gold Playz</span><span class="message">Watch you lose lol</span>
 						</li>
@@ -396,26 +394,7 @@
 				<div id="badges-received">
 					<h2>Badges Awarded</h2>
 					<ul id="badges-received-list">
-						<li>
-							<div class="badge-title">
-								1st Place
-							</div>
-							<img src="badges/1st-place-badge.png">
-							<div class="badge-description">
-								Score the most points in a game.
-							</div>
-						</li>
-						<li>
-							<div class="badge-title">
-								1st Place
-							</div>
-							<img src="badges/1st-place-badge.png">
-							<div class="badge-description">
-								Score the most points in a game.
-							</div>
-						</li>
 					</ul>
-
 				</div>
 
 				<div id="stats">
@@ -436,6 +415,7 @@
 	</div>
 	<script>
 		$(document).ready(function() {
+			// Global variables
 			var endGame = true;
 			var timeStart = 0;
 			var timeEnd = 0;
@@ -443,12 +423,30 @@
 			var fastAnswer = false;
 			var touchedScroll = false;
 
+	        // Sounds
+		    var goatSound = document.createElement('audio');
+		    goatSound.setAttribute('src', 'sounds/goat.mp3');
+
+		    var rightAnswer = document.createElement('audio');
+		    rightAnswer.setAttribute('src', 'sounds/music_marimba_chord.wav');
+
+		    var wrongAnswer = document.createElement('audio');
+		    wrongAnswer.setAttribute('src', 'sounds/wrong.mp3');
+
+		    var selectAnswer = document.createElement('audio');
+		    selectAnswer.setAttribute('src', 'sounds/pop_drip.mp3');
+
+			var questionPresent = document.createElement('audio');
+		    questionPresent.setAttribute('src', 'sounds/question_louder.mp3');
+		    
+
 			// Initially disable answer buttons
 			$(".answer").prop("disabled", true);
 
 			// Register answer and track answer speed
 			var submittedAnswer = null;
 			$(".answer").click(function() {
+				selectAnswer.play();
 				timeEnd = new Date().getTime();
 				answerTime = timeEnd - timeStart;
 				fastAnswer = answerTime < 3000 ? true : false;
@@ -900,14 +898,22 @@
 	        	$("#chat").show();
 	        });
 
-	        // Easter Eggs
-		    var audioElement = document.createElement('audio');
-		    audioElement.setAttribute('src', 'goat.mp3');
-		    
+	        // Goat easter egg
 		    $('#goat').click(function() {
-		        audioElement.play();
+		        goatSound.play();
 		    });
 		    
+		    // Badge hover overs
+		    $(document).on('mouseenter', '.badge', function() {
+		    	var badgeDescription = $(this).prev().text();
+			    $(this).parent().parent().find(".badge-hover-over").show().text(badgeDescription);
+			}).on('mouseleave', '.badge', function() {
+			    $(this).parent().parent().find(".badge-hover-over").hide();
+			});
+
+
+
+
 		    // Intialize Socket.io
 			var socket = io('http://localhost:3000');
 			// Initialize
@@ -972,6 +978,7 @@
 
 				// Show correct or incorrect messaging
 				if (individualData.currentQuestionCorrect) {
+					rightAnswer.play();
 					// Fast Answer
 					if (individualData.currentQuestionCorrect && fastAnswer) {
 						$("#bonus-amount").html("<br>+50 Fast Answer");
@@ -982,6 +989,7 @@
 					$("#" + correctAnswer).addClass("blink");
 					$("#" + correctAnswer).addClass("correct-answer");
 				} else {
+					wrongAnswer.play();
 					$("#" + correctAnswer).addClass("incorrect-answer");
 				}
 
@@ -997,6 +1005,8 @@
 			});
 
 			socket.on('questionPresented', function(questionData) {
+				questionPresent.play();
+
 				// Reset time to answer values
 				timeStart = 0;
 				timeEnd = 0;
@@ -1068,7 +1078,7 @@
 
 			// Chat receive
 			socket.on("incoming-message", function(message) {
-				var message = '<li class="message-row"><img class="user-icon" src="avatars/new-wesner.png"><span class="chat-user">New Wesner</span><span class="message">' + message + '</span></li>';$("#mCSB_1_container").append(message);
+				var message = '<li class="message-row"><img class="user-icon" src="http://api.adorable.io/avatar/45/rando"><span class="chat-user">New Wesner</span><span class="message">' + message + '</span></li>';$("#mCSB_1_container").append(message);
 
 				// Trigger 
 				$(document).trigger("checkChatPosition");
@@ -1101,20 +1111,32 @@
 			// End Game
 			// Hide everything except the video
 			$("#end-game").click(function() {
-				$("#results-section").show();
 				socket.emit("end-game");
+			});
+			socket.on("game-over", function(resultTable) {
+				console.log("GAME OVER");
+				$("#results-section").show();
 				$("#left-col, #right-col, .question-container-desktop").fadeToggle(function() {
 						$("#console").attr("style", "text-align: center; height: 420px; margin-bottom: 10px;");
 						$("#video").attr("style", "float: none;");
 						$("#game-results-title").slideDown();
 				});
-			});
-			socket.on("game-over", function(resultTable) {
 				$("#stats table tbody").append(resultTable);
 				socket.emit("get-individual-badges");
 			});
 			socket.on("badges-returned", function(badges) {
 				console.log(badges);
+
+				// Compile badges and insert into DOM
+				if (badges.length === 0) {
+					$("#badges-received").hide();
+				} else {
+					var badgeHTML = "";
+					for (var i = 0; i < badges.length; i++) {
+						badgeHTML += "<li><div class='badge-title'>" + badges[i].title + "</div><img src='" + badges[i].href + "'><div class='badge-description'>" +badges[i].description + "</div></li>";
+					}
+					$("#badges-received-list").html(badgeHTML);
+				}
 			});
 			
 

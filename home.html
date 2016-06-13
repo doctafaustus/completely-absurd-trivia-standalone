@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Completely Absurd Trivia</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="normalize.css">
+	<style>
+		body {
+			background-image: url(wallhaven-800.jpg);
+			background-repeat: no-repeat;
+			background-position: center center;
+			background-attachment: fixed;
+			background-color: black;
+			-webkit-background-size: cover;
+			-moz-background-size: cover;
+			-o-background-size: cover;
+			background-size: cover;
+		}
+		#bg {
+		    -webkit-transition: all 9s ease;
+		    -moz-transition: all 9s ease;
+		    -o-transition: all 9s ease;
+		    transition: all 9s ease;
+			height: 1000px;
+			width: 100%;
+			border: solid 1px purple;
+		}
+		.bg-tint {
+			background-color: rgba(0, 0, 255, 0.18);
+		}
+		.bg-tint-new {
+			background-color: rgba(255, 0, 0, 0.26);
+		}
+	</style>
+</head>
+<body>
+	<div id="bg" class="bg-tint">
+	test
+	</div>
+
+	<script>
+		var bg = $("#bg");
+
+		setInterval(function() {
+			var hue = 'rgba(' + (Math.floor(Math.random() * 256)) + ',' + (Math.floor(Math.random() * 256)) + ',' + (Math.floor(Math.random() * 256));
+			bg.removeClass("bg-tint").attr("style", "background-color: " + hue + ", 0.26)");
+		}, 10000);
+	</script>
+</body>
+</html>

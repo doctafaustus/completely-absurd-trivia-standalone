@@ -55,3 +55,5 @@ Categorize badge levels (super perfect game shouldn't factor into ingredients)
 
 
 
+
+Create offline game for others so they have something to do.

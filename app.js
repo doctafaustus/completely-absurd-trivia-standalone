@@ -16,7 +16,7 @@ request({
 	        // console.log(body) // Print the json response
 	        questionData = body;
 	    }
-})
+});
 var currentQuestion;
 var currentQuestionID;
 var currentQuestionAnswer;
@@ -34,47 +34,27 @@ var badges = {
 	firstPlace: {
 		title: "1st Place",
 		href: "badges/1st-place-badge.png",
-		description: "Score the most points in a game."
+		description: "Score the most points in a game"
 	},
   	secondPlace: {
   		title: "2nd Place",
   		href: "badges/2nd-place-badge.png",
-  		description: "Score the second most points in a game."
+  		description: "Score the second most points in a game"
   	},
   	thirdPlace: {
   		title: "3rd Place",
   		href: "badges/3rd-place-badge.png",
-  		description: "Score the thrid most points in a game."
-  	},
-  	threeStreak: {
-  		title: "3x Streak",
-  		href: "badges/3x-badge.png",
-  		description: "Correctly answer 3 questions in a row."
-  	},
-  	fiveStreak: {
-  		title: "5x Streak",
-  		href: "badges/5x-badge.png",
-  		description: "Correctly answer 5 questions in a row."
-  	},
-  	tenStreak: {
-  		title: "10x Streak",
-  		href: "badges/10x-badge.png",
-  		description: "Correctly answer 10 questions in a row."
-  	},
-  	fifteenStreak: {
-  		title: "15x Streak",
-  		href: "badges/15x-badge.png",
-  		description: "Correctly answer 15 questions in a row."
+  		description: "Score the thrid most points in a game"
   	},
   	seventyFiveAccuracy: {
   		title: "On Point",
   		href: "badges/75-percent-accuracy-badge.png",
-  		description: "Finish a game with over 75% accuracy."
+  		description: "Finish a game with over 75% accuracy"
   	},
   	firstGame: {
   		title: "Newbie",
   		href: "badges/first-game-badge.png",
-  		description: "Play your first game."
+  		description: "Play your first game"
   	},
   	goatOfTheGame: {
   		title: "Goat of the Game",
@@ -84,47 +64,67 @@ var badges = {
   	highestAccuracy: {
   		title: "Poindexter",
   		href: "badges/highest-accuracy-badge.png",
-  		description: "Finish a game with the highest accuracy of any player."
+  		description: "Finish a game with the highest accuracy of any player"
   	},
   	highestStreak: {
   		title: "On Fire",
   		href: "badges/highest-streak-badge.png",
-  		description: "Finish a game with the highest streak of any player."
+  		description: "Finish a game with the highest streak of any player"
   	},
   	loser: {
   		title: "Total Loser",
   		href: "badges/loser-badge.png",
-  		description: "Answer no questions correctly."
+  		description: "Answer no questions correctly"
   	},
   	perfectGame: {
   		title: "Hail to the Chief",
   		href: "badges/perfect-game-badge.png",
-  		description: "Answer every single question correctly."
+  		description: "Answer every single question correctly"
   	},
   	topTen: {
   		title: "Elitist",
   		href: "badges/top-ten-badge.png",
-  		description: "Rank in the top ten."
+  		description: "Rank in the top ten"
+  	},
+  	threeStreak: {
+  		title: "3x Streak",
+  		href: "badges/3x-badge.png",
+  		description: "Correctly answer 3 questions in a row"
+  	},
+  	fiveStreak: {
+  		title: "5x Streak",
+  		href: "badges/5x-badge.png",
+  		description: "Correctly answer 5 questions in a row"
+  	},
+  	tenStreak: {
+  		title: "10x Streak",
+  		href: "badges/10x-badge.png",
+  		description: "Correctly answer 10 questions in a row."
+  	},
+  	fifteenStreak: {
+  		title: "15x Streak",
+  		href: "badges/15x-badge.png",
+  		description: "Correctly answer 15 questions in a row"
   	},
   	category1: {
   		title: "Hot Pot Master",
   		href: "badges/hot-pot-badge.png",
-  		description: "Get all questions right in this category."
+  		description: "Get all questions right in this category"
   	},
   	category2: {
   		title: "Pics of Your Mom Master",
   		href: "badges/pics-of-your-mom-badge.png",
-  		description: "Get all questions right in this category."
+  		description: "Get all questions right in this category"
   	},
   	category3: {
   		title: "Disgusting Food Master",
   		href: "badges/disgusting-food-badge.png",
-  		description: "Get all questions right in this category."
+  		description: "Get all questions right in this category"
   	},
   	category4: {
   		title: "Memes Master",
   		href: "badges/memes-badge",
-  		description: "Get all questions right in this category."
+  		description: "Get all questions right in this category"
   	}
 
 };
@@ -133,6 +133,14 @@ var badges = {
 // ROUTES
 app.get('/', function(req, res) {
 	res.sendFile(__dirname + '/index.html');
+});
+
+app.get('/landing', function(req, res) {
+	res.sendFile(__dirname + '/landing.html');
+});
+
+app.get('/home', function(req, res) {
+	res.sendFile(__dirname + '/home.html');
 });
 
 // SERVER
@@ -191,7 +199,7 @@ io.on('connection', function (socket) {
 		for (var i = 0; i < sortedClients.length; i++) { 
 			if (i < 5) {
 			  leaderboard += "<tr>" + "<td class='leaderboard-rank'>" + sortedClients[i].rank + "." + "</td>" + "<td class='leaderboard-score'>" + 
-			  sortedClients[i].score + "</td>" + "<td class='leaderboard-user'>" + sortedClients[i].name + "</td>" + "<tr/>"; 
+			  sortedClients[i].score + "</td>" + "<td class='leaderboard-user'>" + sortedClients[i].name + "</td>" + "</td><tr/>"; 
 			} else {
 				break;
 			}
@@ -311,7 +319,7 @@ io.on('connection', function (socket) {
 				if (sortedClients[i].accuracy >= 75) { // 75%+ Accuracy
 					sortedClients[i].badges.push(badges.seventyFiveAccuracy);
 				}
-				if (sortedClients[i].accuracy >= 75) { // Goat of the Game
+				if (sortedClients[i].name == goat.name) { // Goat of the Game
 					goat.badges.push(badges.goatOfTheGame);
 				}
 				if (sortedClients[i].score === 0) { // Loser
@@ -344,7 +352,7 @@ io.on('connection', function (socket) {
 				var userBadges = "";
 				for (j = 0; j < sortedClients[i].badges.length; j++) {
 					console.log(sortedClients[i].badges[j]);
-					userBadges += "<img src='" + sortedClients[i].badges[j].href + "' title='"  + sortedClients[i].badges[j].description + "'>";
+					userBadges += "<div class='badge-info'><div class='badge-description-table'>" + sortedClients[i].badges[j].description + "</div><img class='badge' src='" + sortedClients[i].badges[j].href + "'></div>";
 				}
 
 				// First Game Badge Needed
@@ -354,7 +362,7 @@ io.on('connection', function (socket) {
 									<td>" + sortedClients[i].score + "</td>\
 									<td>" + sortedClients[i].highStreak + "</td>\
 									<td>" + sortedClients[i].accuracy + "%</td>\
-									<td>" + userBadges + "</td>\
+									<td><div class='badge-div'><div class='badge-hover-over'>test</div>" + userBadges + "</div></td>\
 								</tr>";
 			}
 

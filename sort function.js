@@ -22,6 +22,7 @@ var players = {
 };
 
 
+
 var players = {
 	player1: {
 		nickname: "Bob",
