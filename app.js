@@ -380,6 +380,11 @@ io.on('connection', function (socket) {
 	console.log("CLIENTS: " + Object.keys(clients).length);
 	//console.log(clients);
 
+	// Register user
+    socket.on('register', function(username) {
+    	clients[socket.id]["name"] = username;
+	});
+
 	// Manual get ranks
     socket.on('getRanks', function(socket) {
     	console.log("Getting ranks...");

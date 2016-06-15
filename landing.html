@@ -142,6 +142,9 @@
 		$('#enter-game').click(function() {
 			if ($('#username').val() == '') {
 				alert('Please enter a username');
+			} else {
+				localStorage.username = $('#username').val();
+				window.location.href = "/";
 			}
 		});
 	</script>

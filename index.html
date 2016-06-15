@@ -239,7 +239,7 @@
 				<h1 id="logo-text">Completely Absurd Trivia</h1>
 				<div id="header-right">
 					<img id="avatar" src="avatar.jpg">
-					<span id="username">VeryNice251</span>
+					<span id="username"></span>
 				</div>
 			</header>
 			<div id="console">
@@ -916,9 +916,11 @@
 
 		    // Intialize Socket.io
 			var socket = io('http://localhost:3000');
+
 			// Initialize
 			socket.on('initialize', function (data) {
-				console.log(data);
+				$('#username').text(localStorage.username);
+				socket.emit('register', localStorage.username);
 			});
 
 			// Get ranks
