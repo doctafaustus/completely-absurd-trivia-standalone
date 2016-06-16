@@ -175,7 +175,7 @@ io.on('connection', function (socket) {
 	//clients[socket.id]["rank"] = 0;
 
 	// Rank players
-	function rankPlayers(endGame) {
+	function rankPlayers(endGame, checkUsername, username) {
 
 		var playerData = {};
 
@@ -186,6 +186,18 @@ io.on('connection', function (socket) {
 		sortedClients.sort(function(a, b){
 		    return b.score - a.score;
 		});
+
+		// Determine if username has been taken already
+		if (checkUsername) {
+			for (var i = 0; i < sortedClients.length; i++) {
+				if (sortedClients[i].name === username) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+
 		var rank = 1;
 		for (var i = 0; i < sortedClients.length; i++) {
 			if (i > 0 && sortedClients[i].score < sortedClients[i - 1].score) {
@@ -382,7 +394,12 @@ io.on('connection', function (socket) {
 
 	// Register user
     socket.on('register', function(username) {
-    	clients[socket.id]["name"] = username;
+    	var userNameTaken = rankPlayers(false, true, username);
+    	if (userNameTaken) {
+    		socket.emit('userNameTaken');
+    	} else {
+    		clients[socket.id]["name"] = username;
+    	}
 	});
 
 	// Manual get ranks

@@ -8,6 +8,7 @@
 	<link rel="stylesheet" type="text/css" href="normalize.css">
 	<link rel="stylesheet" type="text/css" href="style.css">
 	<link rel="stylesheet" type="text/css" href="hover.css">
+	<link rel="stylesheet" href="flipclock.css">
 	<link rel="stylesheet" type="text/css" href="jquery.mCustomScrollbar.min.css">
 	<style type="text/css">
 		.mCSB_dragger_bar{ width: 8px !important; background-color: #FD00AF !important; border-radius: 0 !important;}
@@ -18,9 +19,28 @@
 	<script src="highcharts.js"></script>
 	<script src="jquery.mCustomScrollbar.concat.min.js"></script>
 	<script src="jquery.transit.min.js"></script>
-
+	<script src="flipclock.min.js"></script>
 </head>
 <body>
+	<div id="landing">
+		<header id="landing-header">
+			<img src="logo.png" id="landing-logo">
+			<h1 id="landing-logo-text">Completely Absurd Trivia</h1>
+			<h2 id="about">About</h2>
+		</header>
+		<div id="landing-main">
+			<h1 id="real-time-title">Real-time Multiplayer Trivia Gameshow</h1>
+			<h2 id="live">LIVE game begins in:</h2>
+			<div id="clock"></div>
+
+			<div id="hidden">
+				<h2 id="enter-username">Enter a username</h2>
+				<input type="text" id="landing-username">
+				<button id="enter-game">Enter Game</button>
+			</div>
+			<img id="screenshot" src="screenshot.jpg">
+		</div>
+	</div>
 	<div id="wrapper">
 		<div id="admin-bar">
 			<h1>Admin</h1>
@@ -246,7 +266,7 @@
 					<div id="game-results-title">
 						Final Results
 					</div>
-					<iframe id="video" src="http://player.twitch.tv/?channel=clowd150" frameborder="0" scrolling="no" height="378" width="626"></iframe>
+<!-- 					<iframe id="video" src="http://player.twitch.tv/?channel=clowd150" frameborder="0" scrolling="no" height="378" width="626"></iframe> -->
 				<div class="question-container-desktop">
 					<div class="question-image-container">
 
@@ -416,6 +436,7 @@
 	<script>
 		$(document).ready(function() {
 			// Global variables
+			var socket;
 			var endGame = true;
 			var timeStart = 0;
 			var timeEnd = 0;
@@ -913,259 +934,284 @@
 
 
 
+			function connect(username) {
+				// Intialize Socket.io
+				socket = io('http://localhost:3000');
 
-		    // Intialize Socket.io
-			var socket = io('http://localhost:3000');
-
-			// Initialize
-			socket.on('initialize', function (data) {
-				$('#username').text(localStorage.username);
-				socket.emit('register', localStorage.username);
-			});
-
-			// Get ranks
-			$("#get-ranks").click(function() {
-				socket.emit('getRanks');
-			});
-			socket.on('playersRanked', function (data) {
-				// Most Points
-				$("#most-points-leader").hide().html(data.playerData.highestScoreData.highestScorePlayer + " (" + data.playerData.highestScoreData.highestScoreNumber + ")").fadeIn(1000);
-				// Correct %
-				$("#correct-leader").hide().html(data.playerData.highestAccuracyData.highestAccuracyPlayer + " (" + data.playerData.highestAccuracyData.highestAccuracyNumber + "%)").fadeIn(1000);
-				// Best Streak
-				$("#best-streak-leader").hide().html(data.playerData.highestStreakData.highestStreakPlayer + " (" + data.playerData.highestStreakData.highestStreakNumber + ")").fadeIn(1000);
-				// Goat of the Game
-				$("#goat-leader").hide().html(data.playerData.goat).fadeIn(1000);
-
-
-				// Populate leaderboard
-				$("#leaderboard").hide().html(data.playerData.leaderboard).fadeIn(1000);
-
-				// Get individual scores
-				socket.emit('getIndividualScores');
-
-				// Basically this checks to see if the playersRank event was triggered manually or automatically (automatic triggers should should specific data)
-				if (data.extraData) { 
-					// Hide Generating Scores...
-					$("#generating").hide();
-
-					// Generate chart 1
-					generateChart1(data.extraData.chart1);
-					// Generate chart 2
-					generateChart2(data.playerData.chart2);
-
-					console.log(data);
-				}
-			});
-
-			// Show individual scores
-			socket.on("showIndividualScores", function(individualData) {
-				console.log(individualData);
-
-				// Popular main score panel
-				$("#my-score").text(individualData.score);
-				$("#my-rank").text(individualData.rank + "/" + individualData.totalPlayers);
-				$("#my-streak").text(individualData.streak);
-				$("#my-accuracy").text(individualData.accuracy + "%");
-
-				// Color category list based on last answer
-				if (individualData.currentQuestionCorrect) {
-					$("." + individualData.currentQuestionID).addClass("correct");
-				} else {
-					$("." + individualData.currentQuestionID).addClass("incorrect");
-				}
-				
-				// Save reference to correct answer
-				var correctAnswer = individualData.currentQuestionAnswer.toUpperCase();
-
-				// Show correct or incorrect messaging
-				if (individualData.currentQuestionCorrect) {
-					rightAnswer.play();
-					// Fast Answer
-					if (individualData.currentQuestionCorrect && fastAnswer) {
-						$("#bonus-amount").html("<br>+50 Fast Answer");
-					}
-					$("#correct-amount").text("+" + individualData.currentQuestionPointValue);
-
-					$(".correct-indicator").slideDown(500); // (Show)
-					$("#" + correctAnswer).addClass("blink");
-					$("#" + correctAnswer).addClass("correct-answer");
-				} else {
-					wrongAnswer.play();
-					$("#" + correctAnswer).addClass("incorrect-answer");
-				}
-
-				// Generate chart 3
-				generateChart3(Number(individualData.accuracy));
-				console.log(Number(individualData.accuracy));
-			});
-
-			// Question control panel
-			$(".question-trigger").click(function() {
-				var questionID = $(this).attr('id');
-				socket.emit('questionTriggered', questionID);
-			});
-
-			socket.on('questionPresented', function(questionData) {
-				questionPresent.play();
-
-				// Reset time to answer values
-				timeStart = 0;
-				timeEnd = 0;
-				answerTime = 0;
-				fastAnswer = false;
-
-				// Hide correct bar
-				$(".correct-indicator").hide(); // (Hide)
-				$("#bonus-amount").html("");
-
-				// Remove old classes on answers
-				$(".answer").removeClass("blink");
-				$(".answer").removeClass("correct-answer");
-				$(".answer").removeClass("incorrect-answer");
-
-				// Reset timer bar
-				$(".progress-bar").attr("style", "width: 100%;");
-
-				// Increment question counter at top of page
-				$("#question-num").text(questionData.questionNum + 1);
-
-				// Reset submitted answer
-				submittedAnswer = null;
-
-				// Show question with answers
-				coolType(questionData.question.q);
-				$("#A").text(questionData.question.a);
-				$("#B").text(questionData.question.b);
-				$("#C").text(questionData.question.c);
-				$("#D").text(questionData.question.d);
-				formatAnswerHeight();
-
-				// Show picture if the question is an image type otherwise show 1x1 transparent pixel placeholder
-				if (questionData.question.type === "image") {
-					console.log(questionData.question.href);
-					$("#question-image").attr("src", questionData.question.href);
-					$(".question").addClass("with-picture");
-				} else {
-					$("#question-image").attr("src", "http://i.imgur.com/gfElT1J.png");
-					$(".question").removeClass("with-picture");
-				}
-
-				// Reset button styles
-				$(".answer").prop("disabled", false).removeClass("selected");
-			});
-
-
-			// Chat send
-			var lastMessageSent;
-			var sentAny = false;
-			$("#chat-form").submit(function(e) {
-				var currentMessageTime = new Date().getTime();
-
-				//console.log(currentMessageTime - lastMessageSent);
-
-				// Prevent message from being sent if last message was less than 3 seconds ago
-				if (currentMessageTime - lastMessageSent < 3000) {
-					alert("Please wait a bit before sending multiple messages");
-					return false;
-				}
-
-				e.preventDefault();
-				var message = $("#message-input").val();
-				socket.emit("send-message", message);
-				$("#message-input").val("");
-
-				lastMessageSent = currentMessageTime;
-			});
-
-			// Chat receive
-			socket.on("incoming-message", function(message) {
-				var message = '<li class="message-row"><img class="user-icon" src="http://api.adorable.io/avatar/45/rando"><span class="chat-user">New Wesner</span><span class="message">' + message + '</span></li>';$("#mCSB_1_container").append(message);
-
-				// Trigger 
-				$(document).trigger("checkChatPosition");
-			});
-
-			// Move video based on window size
-
-			var chat = $("#chat");
-			function resize() {
-				var width = $(window).width();
-				if (width < 1600 && chat.attr("class") !== "chat-mobile") {
-					// Move chat
-					$("#chart1").before(chat);
-					chat.addClass("chat-mobile");
-					chat.after($("#chart3-container"));
-
-				} else if (width >= 1600) {
-					chat.removeClass("chat-mobile");
-					$("#chart2").before(chat);
-					chat.before($("#chart3-container"));
-				}
-			}
-
-			resize();
-			$(window).resize(function() {
-				resize();
-    		});
-
-
-			// End Game
-			// Hide everything except the video
-			$("#end-game").click(function() {
-				socket.emit("end-game");
-			});
-			socket.on("game-over", function(resultTable) {
-				console.log("GAME OVER");
-				$("#results-section").show();
-				$("#left-col, #right-col, .question-container-desktop").fadeToggle(function() {
-						$("#console").attr("style", "text-align: center; height: 420px; margin-bottom: 10px;");
-						$("#video").attr("style", "float: none;");
-						$("#game-results-title").slideDown();
+				// Initialize
+				socket.on('initialize', function (data) {
+					$('#username').text(username);
+					socket.emit('register', username);
 				});
-				$("#stats table tbody").append(resultTable);
-				socket.emit("get-individual-badges");
-			});
-			socket.on("badges-returned", function(badges) {
-				console.log(badges);
 
-				// Compile badges and insert into DOM
-				if (badges.length === 0) {
-					$("#badges-received").hide();
-				} else {
-					var badgeHTML = "";
-					for (var i = 0; i < badges.length; i++) {
-						badgeHTML += "<li><div class='badge-title'>" + badges[i].title + "</div><img src='" + badges[i].href + "'><div class='badge-description'>" +badges[i].description + "</div></li>";
+
+				socket.on('userNameTaken', function() {
+					console.log('user name has been taken');
+					socket.disconnect();
+					alert('Username currently in user. Please try another!');
+				});
+
+				// Get ranks
+				$("#get-ranks").click(function() {
+					socket.emit('getRanks');
+				});
+				socket.on('playersRanked', function (data) {
+					// Most Points
+					$("#most-points-leader").hide().html(data.playerData.highestScoreData.highestScorePlayer + " (" + data.playerData.highestScoreData.highestScoreNumber + ")").fadeIn(1000);
+					// Correct %
+					$("#correct-leader").hide().html(data.playerData.highestAccuracyData.highestAccuracyPlayer + " (" + data.playerData.highestAccuracyData.highestAccuracyNumber + "%)").fadeIn(1000);
+					// Best Streak
+					$("#best-streak-leader").hide().html(data.playerData.highestStreakData.highestStreakPlayer + " (" + data.playerData.highestStreakData.highestStreakNumber + ")").fadeIn(1000);
+					// Goat of the Game
+					$("#goat-leader").hide().html(data.playerData.goat).fadeIn(1000);
+
+
+					// Populate leaderboard
+					$("#leaderboard").hide().html(data.playerData.leaderboard).fadeIn(1000);
+
+					// Get individual scores
+					socket.emit('getIndividualScores');
+
+					// Basically this checks to see if the playersRank event was triggered manually or automatically (automatic triggers should should specific data)
+					if (data.extraData) { 
+						// Hide Generating Scores...
+						$("#generating").hide();
+
+						// Generate chart 1
+						generateChart1(data.extraData.chart1);
+						// Generate chart 2
+						generateChart2(data.playerData.chart2);
+
+						console.log(data);
 					}
-					$("#badges-received-list").html(badgeHTML);
+				});
+
+				// Show individual scores
+				socket.on("showIndividualScores", function(individualData) {
+					console.log(individualData);
+
+					// Popular main score panel
+					$("#my-score").text(individualData.score);
+					$("#my-rank").text(individualData.rank + "/" + individualData.totalPlayers);
+					$("#my-streak").text(individualData.streak);
+					$("#my-accuracy").text(individualData.accuracy + "%");
+
+					// Color category list based on last answer
+					if (individualData.currentQuestionCorrect) {
+						$("." + individualData.currentQuestionID).addClass("correct");
+					} else {
+						$("." + individualData.currentQuestionID).addClass("incorrect");
+					}
+					
+					// Save reference to correct answer
+					var correctAnswer = individualData.currentQuestionAnswer.toUpperCase();
+
+					// Show correct or incorrect messaging
+					if (individualData.currentQuestionCorrect) {
+						rightAnswer.play();
+						// Fast Answer
+						if (individualData.currentQuestionCorrect && fastAnswer) {
+							$("#bonus-amount").html("<br>+50 Fast Answer");
+						}
+						$("#correct-amount").text("+" + individualData.currentQuestionPointValue);
+
+						$(".correct-indicator").slideDown(500); // (Show)
+						$("#" + correctAnswer).addClass("blink");
+						$("#" + correctAnswer).addClass("correct-answer");
+					} else {
+						wrongAnswer.play();
+						$("#" + correctAnswer).addClass("incorrect-answer");
+					}
+
+					// Generate chart 3
+					generateChart3(Number(individualData.accuracy));
+					console.log(Number(individualData.accuracy));
+				});
+
+				// Question control panel
+				$(".question-trigger").click(function() {
+					var questionID = $(this).attr('id');
+					socket.emit('questionTriggered', questionID);
+				});
+
+				socket.on('questionPresented', function(questionData) {
+					questionPresent.play();
+
+					// Reset time to answer values
+					timeStart = 0;
+					timeEnd = 0;
+					answerTime = 0;
+					fastAnswer = false;
+
+					// Hide correct bar
+					$(".correct-indicator").hide(); // (Hide)
+					$("#bonus-amount").html("");
+
+					// Remove old classes on answers
+					$(".answer").removeClass("blink");
+					$(".answer").removeClass("correct-answer");
+					$(".answer").removeClass("incorrect-answer");
+
+					// Reset timer bar
+					$(".progress-bar").attr("style", "width: 100%;");
+
+					// Increment question counter at top of page
+					$("#question-num").text(questionData.questionNum + 1);
+
+					// Reset submitted answer
+					submittedAnswer = null;
+
+					// Show question with answers
+					coolType(questionData.question.q);
+					$("#A").text(questionData.question.a);
+					$("#B").text(questionData.question.b);
+					$("#C").text(questionData.question.c);
+					$("#D").text(questionData.question.d);
+					formatAnswerHeight();
+
+					// Show picture if the question is an image type otherwise show 1x1 transparent pixel placeholder
+					if (questionData.question.type === "image") {
+						console.log(questionData.question.href);
+						$("#question-image").attr("src", questionData.question.href);
+						$(".question").addClass("with-picture");
+					} else {
+						$("#question-image").attr("src", "http://i.imgur.com/gfElT1J.png");
+						$(".question").removeClass("with-picture");
+					}
+
+					// Reset button styles
+					$(".answer").prop("disabled", false).removeClass("selected");
+				});
+
+
+				// Chat send
+				var lastMessageSent;
+				var sentAny = false;
+				$("#chat-form").submit(function(e) {
+					var currentMessageTime = new Date().getTime();
+
+					//console.log(currentMessageTime - lastMessageSent);
+
+					// Prevent message from being sent if last message was less than 3 seconds ago
+					if (currentMessageTime - lastMessageSent < 3000) {
+						alert("Please wait a bit before sending multiple messages");
+						return false;
+					}
+
+					e.preventDefault();
+					var message = $("#message-input").val();
+					socket.emit("send-message", message);
+					$("#message-input").val("");
+
+					lastMessageSent = currentMessageTime;
+				});
+
+				// Chat receive
+				socket.on("incoming-message", function(message) {
+					var message = '<li class="message-row"><img class="user-icon" src="http://api.adorable.io/avatar/45/rando"><span class="chat-user">New Wesner</span><span class="message">' + message + '</span></li>';$("#mCSB_1_container").append(message);
+
+					// Trigger 
+					$(document).trigger("checkChatPosition");
+				});
+
+				// Move video based on window size
+
+				var chat = $("#chat");
+				function resize() {
+					var width = $(window).width();
+					if (width < 1600 && chat.attr("class") !== "chat-mobile") {
+						// Move chat
+						$("#chart1").before(chat);
+						chat.addClass("chat-mobile");
+						chat.after($("#chart3-container"));
+
+					} else if (width >= 1600) {
+						chat.removeClass("chat-mobile");
+						$("#chart2").before(chat);
+						chat.before($("#chart3-container"));
+					}
+				}
+
+				resize();
+				$(window).resize(function() {
+					resize();
+	    		});
+
+
+				// End Game
+				// Hide everything except the video
+				$("#end-game").click(function() {
+					socket.emit("end-game");
+				});
+				socket.on("game-over", function(resultTable) {
+					console.log("GAME OVER");
+					$("#results-section").show();
+					$("#left-col, #right-col, .question-container-desktop").fadeToggle(function() {
+							$("#console").attr("style", "text-align: center; height: 420px; margin-bottom: 10px;");
+							$("#video").attr("style", "float: none;");
+							$("#game-results-title").slideDown();
+					});
+					$("#stats table tbody").append(resultTable);
+					socket.emit("get-individual-badges");
+				});
+				socket.on("badges-returned", function(badges) {
+					console.log(badges);
+
+					// Compile badges and insert into DOM
+					if (badges.length === 0) {
+						$("#badges-received").hide();
+					} else {
+						var badgeHTML = "";
+						for (var i = 0; i < badges.length; i++) {
+							badgeHTML += "<li><div class='badge-title'>" + badges[i].title + "</div><img src='" + badges[i].href + "'><div class='badge-description'>" +badges[i].description + "</div></li>";
+						}
+						$("#badges-received-list").html(badgeHTML);
+					}
+				});
+
+				// Admin layout stuff
+				if ($("#admin-bar").is(":visible")) {
+					$("#wrapper").addClass("admin-wrapper");
+				}
+				// Admin annoucement
+				$("#admin-form").submit(function(e) {
+					e.preventDefault();
+					var message = $("#admin-input").val();
+					$("#admin-input").val("");
+					socket.emit("admin-send-message", message);
+				});
+				socket.on("admin-incoming-message", function(message) {
+					$("#admin-message-text").text("Admin: " + message);
+					$("#admin-message").show();
+				});
+				$("#admin-hide").click(function() {
+					socket.emit("admin-hide-triggered");
+				});
+				socket.on("admin-hide", function() {
+					$("#admin-message").hide();
+				});
+			}
+		    
+			var clock = $('#clock').FlipClock({
+				countdown: true,
+			});
+			clock.setTime(10);
+			clock.start();
+
+			var username;
+
+			$('#enter-game').click(function() {
+				if ($('#landing-username').val() == '') {
+					alert('Please enter a username');
+				} else {
+					username = $('#landing-username').val();
+					connect(username);
 				}
 			});
-			
 
 
-
-			// Admin layout stuff
-			if ($("#admin-bar").is(":visible")) {
-				$("#wrapper").addClass("admin-wrapper");
-			}
-			// Admin annoucement
-			$("#admin-form").submit(function(e) {
-				e.preventDefault();
-				var message = $("#admin-input").val();
-				$("#admin-input").val("");
-				socket.emit("admin-send-message", message);
-			});
-			socket.on("admin-incoming-message", function(message) {
-				$("#admin-message-text").text("Admin: " + message);
-				$("#admin-message").show();
-			});
-			$("#admin-hide").click(function() {
-				socket.emit("admin-hide-triggered");
-			});
-			socket.on("admin-hide", function() {
-				$("#admin-message").hide();
-			});
 		});
 	</script>
+	<script src="flipclock.min.js"></script>
 </body>
 </html>
