@@ -4,6 +4,7 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var request = require("request");
+var fs = require('fs');
 
 // CONFIG
 app.use(express.static(__dirname + '/public'));
@@ -17,6 +18,7 @@ request({
 	        questionData = body;
 	    }
 });
+var admin = (process.env.PORT) ? process.env.ADMINUSERNAME : fs.readFileSync('./public/admin.txt').toString();
 var currentQuestion;
 var currentQuestionID;
 var currentQuestionAnswer;
@@ -175,17 +177,21 @@ io.on('connection', function (socket) {
 	//clients[socket.id]["rank"] = 0;
 
 	// Rank players
-	function rankPlayers(endGame, checkUsername, username) {
+	function rankPlayers(endGame, checkUsername, username, checkAdmin) {
 
 		var playerData = {};
 
 		var sortedClients = [];
 		for (var key in clients) {
-			sortedClients.push(clients[key]);
+			if (clients[key]["name"] !== admin) {
+				sortedClients.push(clients[key]);
+			}
 		}
 		sortedClients.sort(function(a, b){
 		    return b.score - a.score;
 		});
+
+
 
 		// Determine if username has been taken already
 		if (checkUsername) {
@@ -197,6 +203,17 @@ io.on('connection', function (socket) {
 			return false;
 		}
 
+		// Remove admin from main players
+		if (checkAdmin) {
+			console.log('true')
+			for (var i = 0; i < sortedClients.length; i++) {
+				console.log(sortedClients[i].name);
+				if (sortedClients[i].name === username) {
+					sortedClients.splice(i, 1);
+					return;
+				}
+			}
+		}
 
 		var rank = 1;
 		for (var i = 0; i < sortedClients.length; i++) {
@@ -261,9 +278,10 @@ io.on('connection', function (socket) {
 
 
 		// Generate Goat of the Game
-		var goat = sortedClients[Math.floor(Math.random() * sortedClients.length)];
-		playerData.goat = goat.name;
-
+		if (sortedClients.length) {
+			var goat = sortedClients[Math.floor(Math.random() * sortedClients.length)];
+			playerData.goat = goat.name;
+		}
 
 		// Generate chart 2 data
 		var pointLevels = {
@@ -390,7 +408,6 @@ io.on('connection', function (socket) {
 	socket.emit('initialize', { clients:  clients, questionData: questionData});
 
 	console.log("CLIENTS: " + Object.keys(clients).length);
-	//console.log(clients);
 
 	// Register user
     socket.on('register', function(username) {
@@ -399,14 +416,21 @@ io.on('connection', function (socket) {
     		socket.emit('userNameTaken');
     	} else {
     		clients[socket.id]["name"] = username;
+    		if  (clients[socket.id]["name"] === admin) {
+    			rankPlayers(false, false, username, true);
+    			socket.emit('showAdmin');
+    		}
+    		socket.emit('registrationComplete');
     	}
 	});
 
 	// Manual get ranks
-    socket.on('getRanks', function(socket) {
-    	console.log("Getting ranks...");
-		var playerData = rankPlayers();
-		io.emit('playersRanked', {playerData: playerData});
+    socket.on('getRanks', function() {
+    	if (clients[socket.id]["name"] === admin) {
+	    	console.log("Getting ranks...");
+			var playerData = rankPlayers();
+			io.emit('playersRanked', {playerData: playerData});
+    	}
 	});
 
 	// Get individual scores
@@ -416,7 +440,7 @@ io.on('connection', function (socket) {
 			streak: clients[socket.id]["streak"],
 			accuracy: clients[socket.id]["accuracy"],
 			rank: clients[socket.id]["rank"],
-			totalPlayers: Object.keys(clients).length,
+			totalPlayers: Object.keys(clients).length - 1, // Assumes admin is logged iin
 			currentQuestionID: currentQuestionID,
 			currentQuestionCorrect: clients[socket.id]["currentQuestionCorrect"],
 			currentQuestionAnswer: currentQuestionAnswer,
@@ -428,67 +452,69 @@ io.on('connection', function (socket) {
 
 	// Trigger question
 	socket.on('questionTriggered', function(questionID) {
-		console.log("Question triggered...");
-		// Reset answersByPlayers
-		answersByPlayers = {
-			"a": 0,
-			"b": 0,
-			"c": 0,
-			"d": 0,
-			"No answer": 0
-		};
-
-		io.emit('questionPresented', {question: questionData[questionID], questionNum: questionsAsked });
-		currentQuestion = questionData[questionID];
-		currentQuestionID = questionID;
-		currentQuestionAnswer = currentQuestion["answer"];
-		questionsAsked += 1;
-		// Get question point value by adding 00 to end of the last character in the question id
-		currentQuestionPointValue = currentQuestionID[currentQuestionID.length - 1];
-		currentQuestionPointValue = Number(currentQuestionPointValue + "00");
-
-		// Automatic Get Ranks 3 seconds after local question time has ended
-		setTimeout(function() {
-	    	console.log("Getting ranks...");
-			var playerData = rankPlayers();
-
-			// Put answersByPlayers into an array so it's usable for Highcharts
-			var answers = [];
-			for (key in answersByPlayers) {
-				answers.push(answersByPlayers[key]);
-			}
-
-			// Determine what position in the color array should hold the pink color for the answer
-			var colors = ['#1797FF', '#1797FF', '#1797FF', '#1797FF', '#1797FF'];
-			var position;
-			switch (currentQuestion["answer"]) {
-				case "a":
-					position = 0;
-					break;
-				case "b":
-					position = 1;
-					break;
-				case "c":
-					position = 2;
-					break;
-				case "d":
-					position = 3;
-					break;
-			}
-			colors[position] = "#FD00AF";
-
-			// Generate chart 1 data
-			var chart1 = {
-				title: currentQuestion["q"],
-				categories: [currentQuestion["a"], currentQuestion["b"], currentQuestion["c"], currentQuestion["d"], "No answer"],
-				questionsAsked: questionsAsked,
-				answersByPlayers: answers,
-				colors: colors
+		if (clients[socket.id]["name"] === admin) {
+			console.log("Question triggered...");
+			// Reset answersByPlayers
+			answersByPlayers = {
+				"a": 0,
+				"b": 0,
+				"c": 0,
+				"d": 0,
+				"No answer": 0
 			};
 
+			io.emit('questionPresented', {question: questionData[questionID], questionNum: questionsAsked });
+			currentQuestion = questionData[questionID];
+			currentQuestionID = questionID;
+			currentQuestionAnswer = currentQuestion["answer"];
+			questionsAsked += 1;
+			// Get question point value by adding 00 to end of the last character in the question id
+			currentQuestionPointValue = currentQuestionID[currentQuestionID.length - 1];
+			currentQuestionPointValue = Number(currentQuestionPointValue + "00");
 
-			io.emit('playersRanked', {playerData: playerData, extraData: { chart1: chart1 } });
-		}, 8500);
+			// Automatic Get Ranks 3 seconds after local question time has ended
+			setTimeout(function() {
+		    	console.log("Getting ranks...");
+				var playerData = rankPlayers();
+
+				// Put answersByPlayers into an array so it's usable for Highcharts
+				var answers = [];
+				for (key in answersByPlayers) {
+					answers.push(answersByPlayers[key]);
+				}
+
+				// Determine what position in the color array should hold the pink color for the answer
+				var colors = ['#1797FF', '#1797FF', '#1797FF', '#1797FF', '#1797FF'];
+				var position;
+				switch (currentQuestion["answer"]) {
+					case "a":
+						position = 0;
+						break;
+					case "b":
+						position = 1;
+						break;
+					case "c":
+						position = 2;
+						break;
+					case "d":
+						position = 3;
+						break;
+				}
+				colors[position] = "#FD00AF";
+
+				// Generate chart 1 data
+				var chart1 = {
+					title: currentQuestion["q"],
+					categories: [currentQuestion["a"], currentQuestion["b"], currentQuestion["c"], currentQuestion["d"], "No answer"],
+					questionsAsked: questionsAsked,
+					answersByPlayers: answers,
+					colors: colors
+				};
+
+
+				io.emit('playersRanked', {playerData: playerData, extraData: { chart1: chart1 } });
+			}, 8500);
+		}
 	});
 
 	// Answer question
@@ -529,9 +555,13 @@ io.on('connection', function (socket) {
 
 		// Keep track of guessed answer for chart 1
 		if (submittedAnswer === null) {
-			answersByPlayers["No answer"]++;
+			if (clients[socket.id]["name"] !== admin) {
+				answersByPlayers["No answer"]++;
+			}
 		} else {
-			answersByPlayers[submittedAnswer]++;
+			if (clients[socket.id]["name"] !== admin) {
+				answersByPlayers[submittedAnswer]++;
+			}
 		}
 
 	});
@@ -544,12 +574,16 @@ io.on('connection', function (socket) {
 
 	// Incoming admin message
     socket.on("admin-send-message", function(message) {
-    	io.emit("admin-incoming-message", message);
+    	if (clients[socket.id]["name"] === admin) {
+    		io.emit("admin-incoming-message", message);
+    	}
     });
 
     // Show admin message (in case of late arrivals)
     socket.on("admin-hide-triggered", function() {
-    	io.emit("admin-hide");
+    	if (clients[socket.id]["name"] === admin) {
+    		io.emit("admin-hide");
+    	}
     });
 
 
@@ -561,8 +595,10 @@ io.on('connection', function (socket) {
 
     // End game
     socket.on("end-game", function() {
-    	var resultTable = rankPlayers(true);
-    	io.emit("game-over", resultTable);
+    	if (clients[socket.id]["name"] === admin) {
+	    	var resultTable = rankPlayers(true);
+	    	io.emit("game-over", resultTable);
+    	}
     });
 
     // Get individual badges

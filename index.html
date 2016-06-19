@@ -35,8 +35,10 @@
 
 			<div id="hidden">
 				<h2 id="enter-username">Enter a username</h2>
-				<input type="text" id="landing-username">
-				<button id="enter-game">Enter Game</button>
+				<form id="register-name">
+					<input type="text" id="landing-username">
+					<input type="submit" id="enter-game" value="Enter Game">
+				</form>
 			</div>
 			<img id="screenshot" src="screenshot.jpg">
 		</div>
@@ -443,6 +445,7 @@
 			var answerTime = 0;
 			var fastAnswer = false;
 			var touchedScroll = false;
+			var username;
 
 	        // Sounds
 		    var goatSound = document.createElement('audio');
@@ -633,18 +636,18 @@
 				$("#chat-messages").mCustomScrollbar("scrollTo","bottom");
 		    }, 600);
 
-			setTimeout(function() {
-				var message = '<li class="message-row"><img class="user-icon" src="avatars/new-wesner.png"><span class="chat-user">New Wesner</span><span class="message">This is a new messages, jsut so you know</span></li>';$("#mCSB_1_container").append(message);
-				if (scrollPosition > 90 || !touchedScroll) { // If user has scrolled up then don't move the scrollbar for them
-					$("#chat-messages").mCustomScrollbar("scrollTo","bottom");
-				}
-			}, 1500);
-			setTimeout(function() {
-				var message = '<li class="message-row"><img class="user-icon" src="avatars/new-wesner.png"><span class="chat-user">New Wesner</span><span class="message">This is a new messages, jsut so you know</span></li>';$("#mCSB_1_container").append(message);
-				if (scrollPosition > 90 || !touchedScroll) {
-					$("#chat-messages").mCustomScrollbar("scrollTo","bottom");
-				}
-			}, 4500);
+			// setTimeout(function() {
+			// 	var message = '<li class="message-row"><img class="user-icon" src="avatars/new-wesner.png"><span class="chat-user">New Wesner</span><span class="message">This is a new messages, jsut so you know</span></li>';$("#mCSB_1_container").append(message);
+			// 	if (scrollPosition > 90 || !touchedScroll) { // If user has scrolled up then don't move the scrollbar for them
+			// 		$("#chat-messages").mCustomScrollbar("scrollTo","bottom");
+			// 	}
+			// }, 1500);
+			// setTimeout(function() {
+			// 	var message = '<li class="message-row"><img class="user-icon" src="avatars/new-wesner.png"><span class="chat-user">New Wesner</span><span class="message">This is a new messages, jsut so you know</span></li>';$("#mCSB_1_container").append(message);
+			// 	if (scrollPosition > 90 || !touchedScroll) {
+			// 		$("#chat-messages").mCustomScrollbar("scrollTo","bottom");
+			// 	}
+			// }, 4500);
 
 			
 
@@ -951,6 +954,15 @@
 					alert('Username currently in user. Please try another!');
 				});
 
+				socket.on('registrationComplete', function() {
+					$('#my-icon, #avatar').attr('src', 'http://api.adorable.io/avatar/70/' + username);
+				});
+
+				socket.on('showAdmin', function() {
+					$('#admin-bar').show();
+					$("#wrapper").addClass("admin-wrapper");
+				});
+
 				// Get ranks
 				$("#get-ranks").click(function() {
 					socket.emit('getRanks');
@@ -1108,7 +1120,7 @@
 
 				// Chat receive
 				socket.on("incoming-message", function(message) {
-					var message = '<li class="message-row"><img class="user-icon" src="http://api.adorable.io/avatar/45/rando"><span class="chat-user">New Wesner</span><span class="message">' + message + '</span></li>';$("#mCSB_1_container").append(message);
+					var message = '<li class="message-row"><img class="user-icon" src="http://api.adorable.io/avatar/45/' + username + '"><span class="chat-user">' + username + '</span><span class="message">' + message + '</span></li>';$("#mCSB_1_container").append(message);
 
 					// Trigger 
 					$(document).trigger("checkChatPosition");
@@ -1169,10 +1181,6 @@
 					}
 				});
 
-				// Admin layout stuff
-				if ($("#admin-bar").is(":visible")) {
-					$("#wrapper").addClass("admin-wrapper");
-				}
 				// Admin annoucement
 				$("#admin-form").submit(function(e) {
 					e.preventDefault();
@@ -1198,11 +1206,41 @@
 			clock.setTime(10);
 			clock.start();
 
-			var username;
+			function detectIE() {
+			    var ua = window.navigator.userAgent;
 
-			$('#enter-game').click(function() {
-				if ($('#landing-username').val() == '') {
+			    var msie = ua.indexOf('MSIE ');
+			    if (msie > 0) {
+			        // IE 10 or older => return version number
+			        return parseInt(ua.substring(msie + 5, ua.indexOf('.', msie)), 10);
+			    }
+
+			    var trident = ua.indexOf('Trident/');
+			    if (trident > 0) {
+			        // IE 11 => return version number
+			        var rv = ua.indexOf('rv:');
+			        return parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)), 10);
+			    }
+
+			    var edge = ua.indexOf('Edge/');
+			    if (edge > 0) {
+			       // Edge (IE 12+) => return version number
+			       return parseInt(ua.substring(edge + 5, ua.indexOf('.', edge)), 10);
+			    }
+
+			    // other browser
+			    return false;
+			}
+
+
+			$('#register-name').submit(function(e) {
+				e.preventDefault();
+				if (detectIE()) {
+					alert('Browser not supported. Please use Google Chrome!');
+				} else if ($('#landing-username').val() == '') {
 					alert('Please enter a username');
+				} else if ($('#landing-username').val().length >= 16) {
+					alert('Username too long! (15 characters max)');
 				} else {
 					username = $('#landing-username').val();
 					connect(username);
