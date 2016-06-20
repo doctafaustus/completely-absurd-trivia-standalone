@@ -942,7 +942,13 @@
 
 			function connect(username) {
 				// Intialize Socket.io
-				socket = io('http://localhost:3000');
+				var ioURL;
+				if (window.location.hostname === "localhost") {
+					ioURL = 'http://localhost:3000';
+				} else {
+					ioURL = 'https://completelyuselesstrivia.herokuapp.com/';
+				}
+				socket = io(ioURL);
 
 				// Initialize
 				socket.on('initialize', function (data) {
