@@ -1,0 +1,25 @@
+{
+  "name": "c",
+  "version": "1.0.0",
+  "description": "Live multi-player trivia game show.",
+  "main": "app.js",
+  "dependencies": {
+    "express": "^4.13.4",
+    "request": "^2.69.0",
+    "socket.io": "^1.4.5"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/doctafaustus/Completely-Absurd-Trivia.git"
+  },
+  "author": "Bill Coloe",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/doctafaustus/Completely-Absurd-Trivia/issues"
+  },
+  "homepage": "https://github.com/doctafaustus/Completely-Absurd-Trivia#readme"
+}
