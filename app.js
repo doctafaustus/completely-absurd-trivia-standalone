@@ -18,6 +18,7 @@ request({
 	        questionData = body;
 	    }
 });
+var port = process.env.PORT || 3000;
 var admin = (process.env.PORT) ? process.env.ADMINUSERNAME : fs.readFileSync('./public/admin.txt').toString();
 var currentQuestion;
 var currentQuestionID;
@@ -146,7 +147,7 @@ app.get('/home', function(req, res) {
 });
 
 // SERVER
-http.listen(3000, function() {
+http.listen(port, function() {
 	console.log("App listening on port 3000");
 });
 
