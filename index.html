@@ -34,7 +34,7 @@
 			<div id="clock"></div>
 
 			<div id="hidden">
-				<h2 id="enter-username">Enter a username</h2>
+				<h2 id="enter-username">They call me...</h2>
 				<form id="register-name">
 					<input type="text" id="landing-username">
 					<input type="submit" id="enter-game" value="Enter Game">
@@ -462,6 +462,9 @@
 
 			var questionPresent = document.createElement('audio');
 		    questionPresent.setAttribute('src', 'sounds/question_louder.mp3');
+
+		    var boot = document.createElement('audio');
+		    boot.setAttribute('src', 'sounds/boot.wav');
 		    
 
 			// Initially disable answer buttons
@@ -956,6 +959,12 @@
 
 				socket.on('registrationComplete', function() {
 					$('#my-icon, #avatar').attr('src', 'http://api.adorable.io/avatar/70/' + username);
+					$('body').addClass('new-height');
+					$('#landing').slideUp(function() {
+						$('#wrapper').slideDown();
+						boot.play();
+					});
+
 				});
 
 				socket.on('showAdmin', function() {
@@ -1204,7 +1213,7 @@
 				countdown: true,
 			});
 			clock.setTime(10);
-			clock.start();
+			//clock.start();
 
 			function detectIE() {
 			    var ua = window.navigator.userAgent;

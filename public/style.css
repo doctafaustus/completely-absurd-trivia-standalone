@@ -7,6 +7,7 @@ h1, h2, h3, h4, h5 ,h6 {
 	font-family: 'Roboto', sans-serif;
 }
 #wrapper {
+	display: none;
 	margin: 0 auto;
 	max-width: 1600px;
 	overflow: auto;
@@ -672,7 +673,7 @@ button:disabled, button:disabled:hover {
 
 
 html, body {
-	height: auto;
+	height: 100%;
 	margin: 0;
 	padding: 0;
 }
@@ -682,6 +683,8 @@ body {
 	background: -webkit-linear-gradient(45deg,  #82d6f0 0%,#2b7ecc 100%);
 	background: linear-gradient(45deg,  #82d6f0 0%,#2b7ecc 100%);
 	background-repeat: no-repeat;
+	background-repeat: no-repeat;
+	background-attachment: fixed;
 }
 #landing h1, h2 {
 	text-align: center;
@@ -766,4 +769,7 @@ body {
 }
 #enter-game:hover {
 	background-color: rgb(51, 51, 51);
+}
+.new-height {
+	height: auto;
 }
