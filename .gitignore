@@ -13,7 +13,6 @@ $RECYCLE.BIN/
 *.msi
 *.msm
 *.msp
-*.psd
 
 # Windows shortcuts
 *.lnk
@@ -49,3 +48,4 @@ Temporary Items
 
 raw_images/*
 public/admin.txt
+public/*.psd
