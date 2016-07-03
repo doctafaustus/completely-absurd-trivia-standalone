@@ -20,6 +20,7 @@
 	<script src="jquery.mCustomScrollbar.concat.min.js"></script>
 	<script src="jquery.transit.min.js"></script>
 	<script src="flipclock.min.js"></script>
+	<script src="moment.min.js"></script>
 </head>
 <body>
 	<div id="landing">
@@ -34,7 +35,7 @@
 			<div id="clock"></div>
 
 			<div id="hidden">
-				<h2 id="enter-username">They call me...</h2>
+				<h2 id="enter-username">Enter a username:</h2>
 				<form id="register-name">
 					<input type="text" id="landing-username">
 					<input type="submit" id="enter-game" value="Enter Game">
@@ -941,6 +942,14 @@
 
 
 			function connect(username) {
+				// If user is trying to enter too early then return
+				var testTime = moment().utc()._d - moment(new Date(targetTime))._d;
+				console.log(testTime);
+				if (testTime < 0) {
+					console.log('User trying to enter too early');
+					return;
+				}
+
 				// Intialize Socket.io
 				var ioURL;
 				if (window.location.hostname === "localhost") {
@@ -1127,15 +1136,16 @@
 
 					e.preventDefault();
 					var message = $("#message-input").val();
-					socket.emit("send-message", message);
+					var messageUsername = username;
+					socket.emit("send-message", message, messageUsername);
 					$("#message-input").val("");
 
 					lastMessageSent = currentMessageTime;
 				});
 
 				// Chat receive
-				socket.on("incoming-message", function(message) {
-					var message = '<li class="message-row"><img class="user-icon" src="http://api.adorable.io/avatar/45/' + username + '"><span class="chat-user">' + username + '</span><span class="message">' + message + '</span></li>';$("#mCSB_1_container").append(message);
+				socket.on("incoming-message", function(message, messageUsername) {
+					var message = '<li class="message-row"><img class="user-icon" src="http://api.adorable.io/avatar/45/' + messageUsername + '"><span class="chat-user">' + messageUsername + '</span><span class="message">' + message + '</span></li>';$("#mCSB_1_container").append(message);
 
 					// Trigger 
 					$(document).trigger("checkChatPosition");
@@ -1215,11 +1225,35 @@
 				});
 			}
 		    
+
+		    var currentTime = moment().utc()._d;
+		    var targetTime = "<%= targetTime %>";
+		    var millisecondsUntilGame = moment(new Date(targetTime)) - currentTime;
+		    console.log(millisecondsUntilGame);
 			var clock = $('#clock').FlipClock({
 				countdown: true,
 			});
-			clock.setTime(10);
-			//clock.start();
+			clock.setTime(millisecondsUntilGame / 1000);
+			if (millisecondsUntilGame < 0) {
+				$('#clock').hide();
+				$('#hidden').show();
+				$('#live').text('Game is currently LIVE!');
+			} else {
+				//clock.setTime(5);
+				clock.start(function() {
+					var clockTime = clock.getTime().time;
+					if (clockTime < 0) {
+						clock.setTime(0);
+						clock.stop(function() {
+							$('#clock').slideUp(function() {
+								$('#hidden').slideDown();
+								$('#live').text('Game is currently LIVE!');
+							});
+						});
+					}
+				});
+			}
+
 
 			function detectIE() {
 			    var ua = window.navigator.userAgent;
@@ -1261,8 +1295,6 @@
 					connect(username);
 				}
 			});
-
-
 		});
 	</script>
 	<script src="flipclock.min.js"></script>

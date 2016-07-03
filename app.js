@@ -5,6 +5,9 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var request = require("request");
 var fs = require('fs');
+var moment = require('moment');
+var ejs = require('ejs');
+
 
 // CONFIG
 app.use(express.static(__dirname + '/public'));
@@ -129,13 +132,14 @@ var badges = {
   		href: "badges/memes-badge",
   		description: "Get all questions right in this category"
   	}
-
 };
 
+var targetTime = moment().utc().date(3).hour(20).minute(24).second(0)._d;
 
 // ROUTES
 app.get('/', function(req, res) {
-	res.sendFile(__dirname + '/index.html');
+	res.render('index.ejs', {targetTime: targetTime});
+	//res.sendFile(__dirname + '/index.html');
 });
 
 app.get('/landing', function(req, res) {
@@ -569,8 +573,8 @@ io.on('connection', function (socket) {
 
 
 	// Incoming message
-	socket.on("send-message", function(message) {
-		io.emit("incoming-message", message);
+	socket.on("send-message", function(message, messageUsername) {
+		io.emit("incoming-message", message, messageUsername);
 	});
 
 	// Incoming admin message

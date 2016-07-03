@@ -730,7 +730,7 @@ body {
 	margin: 0 auto;
 	width: 40%;
 	box-shadow: 10px 10px 5px rgba(45, 45, 45, 0.20);
-	margin-top: 40px;
+	margin-top: 50px;
 	margin-bottom: 40px;
 }
 #enter-username {
@@ -772,4 +772,7 @@ body {
 }
 .new-height {
 	height: auto;
+}
+#hidden {
+	display: none;
 }
