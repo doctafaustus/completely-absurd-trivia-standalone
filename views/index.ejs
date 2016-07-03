@@ -1067,6 +1067,7 @@
 				$(".question-trigger").click(function() {
 					var questionID = $(this).attr('id');
 					socket.emit('questionTriggered', questionID);
+					$(this).attr('style', 'background-color: #a29898');
 				});
 
 				socket.on('questionPresented', function(questionData) {
