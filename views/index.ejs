@@ -944,7 +944,6 @@
 			function connect(username) {
 				// If user is trying to enter too early then return
 				var testTime = moment().utc()._d - moment(new Date(targetTime))._d;
-				console.log(testTime);
 				if (testTime < 0) {
 					console.log('User trying to enter too early');
 					return;
