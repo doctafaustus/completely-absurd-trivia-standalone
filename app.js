@@ -134,7 +134,7 @@ var badges = {
   	}
 };
 
-var targetTime = moment().utc().date(3).hour(20).minute(24).second(0)._d;
+var targetTime = moment().utc().date(4).hour(20).minute(24).second(0)._d;
 
 // ROUTES
 app.get('/', function(req, res) {
