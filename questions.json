@@ -46,7 +46,7 @@
 	},
 	"c2-q1": {
 		"type": "image",
-		"href": "http://i.imgur.com/K8g1D2P.jpg",
+		"href": "images/K8g1D2P.jpg",
 		"q": "Whose mom is this?",
 		"a": "Mariska Hargitay",
 		"b": "Pamela Anderson",
@@ -56,7 +56,7 @@
 	},
 	"c2-q2": {
 		"type": "image",
-		"href": "http://i.imgur.com/NoZIEEK.jpg",
+		"href": "images/NoZIEEK.jpg",
 		"q": "What is this mother's maiden name?",
 		"a": "Anderson",
 		"b": "Simpson",
@@ -66,7 +66,7 @@
 	},
 	"c2-q3": {
 		"type": "image",
-		"href": "http://i.imgur.com/hNUDQ1c.jpg",
+		"href": "images/hNUDQ1c.jpg",
 		"q": "How do you spell this mother's name?",
 		"a": "Mother Teresa",
 		"b": "Madre Taresa",
@@ -76,7 +76,7 @@
 	},
 	"c2-q4": {
 		"type": "image",
-		"href": "http://i.imgur.com/6M58x4M.jpg",
+		"href": "images/6M58x4M.jpg",
 		"q": "How many children does this mother have?",
 		"a": "16",
 		"b": "19",
@@ -86,7 +86,7 @@
 	},
 	"c2-q5": {
 		"type": "image",
-		"href": "http://i.imgur.com/diUWkxH.jpg",
+		"href": "images/diUWkxH.jpg",
 		"q": "Who is not a child of this mother?",
 		"a": "Aimee",
 		"b": "Daniel",
@@ -141,7 +141,7 @@
 	},
 	"c4-q1": {
 		"type": "image",
-		"href": "http://i.imgur.com/wehfw2z.jpg",
+		"href": "images/wehfw2z.jpg",
 		"q": "Who is this?",
 		"a": "Scumbag Sean",
 		"b": "Sleazeball Shawn",
@@ -151,7 +151,7 @@
 	},
 	"c4-q2": {
 		"type": "image",
-		"href": "http://i.imgur.com/GImGEX2.jpg",
+		"href": "images/GImGEX2.jpg",
 		"q": "What is the name of this frog?",
 		"a": "Pepe",
 		"b": "Pete",
@@ -161,7 +161,7 @@
 	},
 	"c4-q3": {
 		"type": "image",
-		"href": "http://i.imgur.com/kfqobKR.jpg",
+		"href": "images/kfqobKR.jpg",
 		"q": "What is this meme typically associated with?",
 		"a": "Creepiness",
 		"b": "Social Awkwardness",
@@ -171,7 +171,7 @@
 	},
 	"c4-q4": {
 		"type": "image",
-		"href": "http://i.imgur.com/SxHeYlt.jpg",
+		"href": "images/SxHeYlt.jpg",
 		"q": "What is this meme commonly known as?",
 		"a": "Overly Attached Girlfriend",
 		"b": "Creepy Girlfriend",
@@ -181,7 +181,7 @@
 	},
 	"c4-q5": {
 		"type": "image",
-		"href": "http://i.imgur.com/tuu5sxb.jpg",
+		"href": "images/tuu5sxb.jpg",
 		"q": "What is the name of this dog?",
 		"a": "Dingo",
 		"b": "Doge",
