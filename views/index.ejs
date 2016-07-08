@@ -512,7 +512,7 @@
 
 			function timerBar() {
 				timeStart = new Date().getTime();
-				$(".progress-bar").transition({ width: 0 }, 5000, 'linear', function() {
+				$(".progress-bar").transition({ width: 0 }, 9000, 'linear', function() {
 						$(".answer").prop("disabled", true);
 						socket.emit("answerGuessed", submittedAnswer, fastAnswer);
 						$("#generating").fadeIn();

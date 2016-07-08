@@ -518,7 +518,7 @@ io.on('connection', function (socket) {
 
 
 				io.emit('playersRanked', {playerData: playerData, extraData: { chart1: chart1 } });
-			}, 8500);
+			}, 12500);
 		}
 	});
 
